@@ -1,0 +1,44 @@
+<form [formGroup]="entry" (ngSubmit)="onSubmit()">
+  <ul>
+    <li>
+      <label for="date">DATE: </label>
+      <input type="date" formControlName="date"/>
+    </li>
+    <li>
+      <label for="lotNumb">LOT NO: </label>
+      <input type="number" formControlName="lotNumb"/>
+    </li>
+    <li>
+      <label for="address">ADDRESS: </label>
+      <input type="text" formControlName="address"/>
+    </li>
+    <li>
+      <label for="boards">BOARDS: </label>
+      <input type="number" formControlName="boards"/>
+    </li>
+    <li>
+      <label for="boardType">BOARD TYPE: </label>
+      <select formControlName = "boardType">
+        <option value="B1 Liso">B1 Liso</option>
+        <option value="B2 Liso">B2 Liso</option>
+        <option value="HQ/QA smo">HQ/QA smo</option>
+        <option value="B1 text">B1 text</option>
+        <option value="B2 text">B2 text</option>
+        <option value="HO/QA">HO/QA</option>
+      </select>
+    </li>
+    <li>
+      <label for="lotNumb">REPAIRS/WARRANTY: </label>
+      <input type="number" formControlName="repairsOrWarranty"/>
+    </li>
+    <li>
+      <label for="lotNumb">OBSERVATIONS: </label>
+      <input type="text" formControlName="observations"/>
+    </li>
+    <li>
+      <label for="lotNumb">IMG: </label>
+       <input type="file" formControlName="image"/>
+    </li>
+  </ul>
+  <button type="submit" [disabled]="!entry.valid">Submit</button>
+</form>

@@ -1,0 +1,7 @@
+<nav>
+  @if(!isLoggedIn) {
+    <button  (click)="login()">Login</button>
+  } @else {
+    <button (click)="logout()">Logout</button>
+  }
+</nav>
