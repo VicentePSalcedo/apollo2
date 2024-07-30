@@ -5,8 +5,8 @@
       <input type="date" formControlName="date"/>
     </li>
     <li>
-      <label for="lotNumb">LOT NO: </label>
-      <input type="number" formControlName="lotNumb"/>
+      <label for="lotNo">LOT NO: </label>
+      <input type="number" formControlName="lotNo"/>
     </li>
     <li>
       <label for="address">ADDRESS: </label>
@@ -28,17 +28,18 @@
       </select>
     </li>
     <li>
-      <label for="lotNumb">REPAIRS/WARRANTY: </label>
+      <label for="repairsOrWarranty">REPAIRS/WARRANTY: </label>
       <input type="number" formControlName="repairsOrWarranty"/>
     </li>
     <li>
-      <label for="lotNumb">OBSERVATIONS: </label>
+      <label for="observations">OBSERVATIONS: </label>
       <input type="text" formControlName="observations"/>
     </li>
     <li>
-      <label for="lotNumb">IMG: </label>
-       <input type="file" formControlName="image"/>
+      <label for="image">IMG: </label>
+      <input type="file" formControlName="image"/>
     </li>
   </ul>
-  <button type="submit" [disabled]="!entry.valid">Submit</button>
+  <button type="submit" [disabled]="!entry.valid || !this.user">Submit</button>
 </form>
+<app-entries />

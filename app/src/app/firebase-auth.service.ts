@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Auth, User, user, GoogleAuthProvider, signOut, signInWithPopup } from '@angular/fire/auth';
+import { Auth, user, GoogleAuthProvider, signOut, signInWithPopup } from '@angular/fire/auth';
 import { Subscription } from 'rxjs';
 
 
@@ -19,9 +19,6 @@ export class FirebaseAuthService {
     return signOut(this.auth);
   }
   constructor() {
-    //this.userSub = this.user$.subscribe((data: User | null) => {
-    //  console.log(data);
-    //})
     this.userSub = this.user$.subscribe();
   }
 }

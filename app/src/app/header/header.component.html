@@ -1,5 +1,5 @@
 <nav>
-  @if(!isLoggedIn) {
+  @if(!this.user) {
     <button  (click)="login()">Login</button>
   } @else {
     <button (click)="logout()">Logout</button>

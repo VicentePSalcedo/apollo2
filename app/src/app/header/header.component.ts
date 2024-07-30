@@ -11,9 +11,8 @@ import { User } from 'firebase/auth';
   styleUrl: './header.component.css'
 })
 export class HeaderComponent implements OnInit, OnDestroy {
-  isLoggedIn: boolean = false;
+  private userSubscription$!: Subscription;
   user!: User | null;
-  private _userSubscription$!: Subscription;
 
   constructor(private userAuth: FirebaseAuthService) {
   }
@@ -27,17 +26,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this._userSubscription$ = this.userAuth.user$.subscribe((data: User | null)=> {
+    this.userSubscription$ = this.userAuth.user$.subscribe((data: User | null)=> {
       this.user = data;
-      if(!this.user){
-        this.isLoggedIn = false;
-      } else {
-        this.isLoggedIn = true;
-      }
     })
   }
 
   ngOnDestroy(): void {
-    this._userSubscription$.unsubscribe();
+    this.userSubscription$.unsubscribe();
   }
 }

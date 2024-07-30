@@ -1,0 +1,34 @@
+<h3>CORNESTONE DRYWALL</h3>
+@if(this.entries != undefined && this.entries.length > 0){
+  <table>
+    <tr>
+      <th>Date</th>
+      <th>Lot No</th>
+      <th>Address</th>
+      <th>Boards</th>
+      <th>Smooth<br>B1</th>
+      <th>Smooth<br>B2</th>
+      <th>Texture<br>B1</th>
+      <th>Texture<br>B2</th>
+      <th>Texture<br>HO/QA</th>
+      <th>Repairs/Warranty</th>
+      <th>Observations</th>
+      <th>Image</th>
+    </tr>
+    @for (entry of this.entries; track entry.date) {
+    <tr>
+      <td>{{ entry.date }}</td>
+      <td>{{ entry.lotNo }}</td>
+      <td>{{ entry.address }}</td>
+      <td>{{ entry.boards }}</td>
+      <td>{{ entry.smoothB1 }}</td>
+      <td>{{ entry.smoothB2 }}</td>
+      <td>{{ entry.textureB1 }}</td>
+      <td>{{ entry.textureB2 }}</td>
+      <td>{{ entry.textureHoQa }}</td>
+      <td>{{ entry.repairsOrWarranty }}</td>
+      <td>{{ entry.observations }}</td>
+    </tr>
+    }
+  </table>
+}
