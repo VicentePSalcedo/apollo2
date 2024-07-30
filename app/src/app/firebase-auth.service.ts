@@ -19,8 +19,9 @@ export class FirebaseAuthService {
     return signOut(this.auth);
   }
   constructor() {
-    this.userSub = this.user$.subscribe((data: User | null) => {
-      console.log(data);
-    })
+    //this.userSub = this.user$.subscribe((data: User | null) => {
+    //  console.log(data);
+    //})
+    this.userSub = this.user$.subscribe();
   }
 }

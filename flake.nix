@@ -28,7 +28,7 @@
           echo "checking @angular/cli is installed"
           ng version
           echo "checking firebase-tools is installed"
-          firebase -- version
+          firebase --version
           '';
         };
     };
