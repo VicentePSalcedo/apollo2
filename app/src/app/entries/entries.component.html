@@ -1,5 +1,5 @@
 <h3>CORNESTONE DRYWALL</h3>
-@if(this.entries != undefined && this.entries.length > 0){
+@if(this.entries != undefined){
   <table>
     <tr>
       <th>Date</th>
@@ -15,7 +15,7 @@
       <th>Observations</th>
       <th>Image</th>
     </tr>
-    @for (entry of this.entries; track entry.date) {
+    @for (entry of this.entries; track entry.id) {
     <tr>
       <td>{{ entry.date }}</td>
       <td>{{ entry.lotNo }}</td>
@@ -31,4 +31,6 @@
     </tr>
     }
   </table>
+} @else {
+  <p>no entries found</p>
 }

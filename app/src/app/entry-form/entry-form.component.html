@@ -1,4 +1,4 @@
-<form [formGroup]="entry" (ngSubmit)="onSubmit()">
+<form [formGroup]="entry" (ngSubmit)="onSubmit(upload)">
   <ul>
     <li>
       <label for="date">DATE: </label>
@@ -21,7 +21,7 @@
       <select formControlName = "boardType">
         <option value="B1 Liso">B1 Liso</option>
         <option value="B2 Liso">B2 Liso</option>
-        <option value="HQ/QA smo">HQ/QA smo</option>
+        <option value="HO/QA smo">HQ/QA smo</option>
         <option value="B1 text">B1 text</option>
         <option value="B2 text">B2 text</option>
         <option value="HO/QA">HO/QA</option>
@@ -36,10 +36,10 @@
       <input type="text" formControlName="observations"/>
     </li>
     <li>
-      <label for="image">IMG: </label>
-      <input type="file" formControlName="image"/>
+      <label for="image">IMGS: </label>
+      <input id="image" type="file" multiple="multiple" formControlName="image" #upload/>
     </li>
   </ul>
-  <button type="submit" [disabled]="!entry.valid || !this.user">Submit</button>
+  <button type="submit" [disabled]="!entry.valid">Submit</button>
 </form>
 <app-entries />

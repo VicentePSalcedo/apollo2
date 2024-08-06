@@ -1,4 +1,5 @@
 export interface Entry {
+  id: String;
   date: String;
   lotNo: Number;
   address: String;
@@ -10,5 +11,5 @@ export interface Entry {
   textureHoQa: Number;
   repairsOrWarranty: Number;
   observations: String;
-  image: String;
+  image: String[];
 }

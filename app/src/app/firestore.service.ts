@@ -4,6 +4,8 @@ import { FirebaseAuthService } from './firebase-auth.service';
 import { User } from 'firebase/auth';
 import { Observable } from 'rxjs';
 import { Entry } from './entry';
+import 'object-hash';
+import objectHash from 'object-hash';
 
 @Injectable({
   providedIn: 'root'
@@ -18,10 +20,12 @@ export class FirestoreService {
   constructor(private userAuth: FirebaseAuthService) {
     this.userAuth.user$.subscribe((data: User) => {
       this.user = data;
-      this.entriesCollection = collection(this.firestore, 'Users/'+ this.user.uid + '/entries/');
-      this.entries$ = collectionData(this.entriesCollection) as Observable<Entry[]>;
+      if(this.user){
+        const userEntrys = collection(this.firestore, 'Users/' + this.user.uid + '/entries/');
+        this.entriesCollection = userEntrys;
+        this.entries$ = collectionData(userEntrys) as Observable<Entry[]>;
+      }
     })
-    console.log(this.entries$);
   }
   addEntry(
     date: String,
@@ -35,9 +39,11 @@ export class FirestoreService {
     textureHoQa: Number,
     repairsOrWarranty: Number,
     observations: String,
-    image: String
+    image: String[]
   ){
+    let id = objectHash(date + lotNo.toString() + address + boards.toString() + smoothB1.toString() + smoothB2.toString() + textureB1.toString() + textureB2.toString() + textureHoQa.toString() + repairsOrWarranty.toString() + observations + image)
     addDoc(this.entriesCollection, <Entry> {
+      id,
       date,
       lotNo,
       address,
