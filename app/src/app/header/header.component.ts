@@ -14,7 +14,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private userSubscription$!: Subscription;
   user!: User | null;
 
-  constructor(private userAuth: FirebaseAuthService) {}
+  constructor(private userAuth: FirebaseAuthService) {
+  }
 
   login() {
     this.userAuth.login();

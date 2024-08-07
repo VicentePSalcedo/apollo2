@@ -1,9 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FirestoreService } from '../firestore.service';
 import { Entry } from '../entry';
-import { Subscription } from 'rxjs';
 import { User } from 'firebase/auth';
 import { FirebaseAuthService } from '../firebase-auth.service';
+import { CloudStorageService } from '../cloud-storage.service';
 
 @Component({
   selector: 'app-entries',
@@ -12,18 +12,30 @@ import { FirebaseAuthService } from '../firebase-auth.service';
   templateUrl: './entries.component.html',
   styleUrl: './entries.component.css'
 })
-export class EntriesComponent implements OnInit, OnDestroy {
-
-  private userSubscription$!: Subscription;
+export class EntriesComponent implements OnInit {
 
   entries?: Entry[];
   user!: User | null;
 
-  constructor(private userAuth: FirebaseAuthService,private firestore: FirestoreService){
+  constructor(
+    private userAuth: FirebaseAuthService,
+    private firestore: FirestoreService,
+    private cloudStorage: CloudStorageService
+  ){ }
+
+  downloadFile(input: string){
+    this.cloudStorage.downloadFile(input);
+  }
+
+  getFileNameFromUrl(fileUrl: string): string {
+    if(this.user){
+      return fileUrl.replace(this.user.uid + "/", "");
+    }
+    return 'none'
   }
 
   sortByDate(data: Entry[]): Entry[] {
-    return data.sort((a, b) => {
+    return data.sort((b, a) => {
       const dateA = new Date(a.date.toString());
       const dateB = new Date(b.date.toString());
       return dateA.getTime() - dateB.getTime();
@@ -41,22 +53,14 @@ export class EntriesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.userSubscription$ = this.userAuth.user$.subscribe((data: User | null)=> {
+    this.userAuth.user$.subscribe((data: User | null)=> {
       this.user = data;
-      if(this.user && this.firestore.entries$) {
-        this.firestore.entries$.subscribe((entries) => {
-          this.entries = this.filterDuplicatesByProperty(this.sortByDate(entries), 'id');
-        })
-      }
-      if(!this.user){
-        this.entries = undefined;
-        console.log(this.entries)
-      }
+      this.firestore.entries$?.subscribe((entries) => {
+        this.entries = this.filterDuplicatesByProperty(
+          this.sortByDate(entries), 'id'
+        );
+      })
     });
-  }
-
-  ngOnDestroy(): void {
-    this.userSubscription$.unsubscribe();
   }
 
 }

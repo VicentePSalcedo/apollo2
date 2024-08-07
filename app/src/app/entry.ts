@@ -1,8 +1,8 @@
 export interface Entry {
-  id: String;
-  date: String;
+  id: string;
+  date: string;
   lotNo: Number;
-  address: String;
+  address: string;
   boards: Number;
   smoothB1: Number;
   smoothB2: Number;
@@ -10,6 +10,6 @@ export interface Entry {
   textureB2: Number;
   textureHoQa: Number;
   repairsOrWarranty: Number;
-  observations: String;
-  image: String[];
+  observations: string;
+  image: string[];
 }

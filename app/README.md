@@ -1,9 +1,5 @@
-- display download buttons for the images
-  - setup download buttons for each image
+- setup download buttons for each image
 - add total line at the bottom
-- make entries clear on logout
 - add export as xlsx button
-- setup security rules for firestore
-- setup security rules for cloud storage
 - configure app checking
 - make it look pretty

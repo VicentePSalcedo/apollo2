@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { ref, Storage, uploadBytesResumable } from '@angular/fire/storage';
+import { ref, Storage, getDownloadURL, uploadBytesResumable, getBlob } from '@angular/fire/storage';
 import { FirebaseAuthService } from './firebase-auth.service';
 import { User } from 'firebase/auth';
 
@@ -23,9 +23,26 @@ export class CloudStorageService {
     for(let i = 0; i < files.length; i++) {
       let file = files.item(i);
       if (file) {
-        let storageRef = ref(this.storage, this.user.uid + "/" + file.name);
+        let storageRef = ref(this.storage, "Users/" + this.user.uid + "/" + file.name);
         uploadBytesResumable(storageRef, file);
       }
     }
+  }
+  downloadFile(input: string) {
+    getDownloadURL(ref(this.storage, "Users/" + input))
+    .then((url) => {
+      const xhr = new XMLHttpRequest();
+      xhr.responseType = 'blob';
+      xhr.onload = (event) => {
+        const blob = xhr.response;
+        let blobUrl = URL.createObjectURL(blob);
+        window.location.assign(blobUrl);
+      };
+      xhr.open('GET', url);
+      xhr.send();
+    })
+    .catch((error) => {
+      console.log(error);
+    });
   }
 }

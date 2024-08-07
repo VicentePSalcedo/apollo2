@@ -1,5 +1,12 @@
 import { inject, Injectable } from '@angular/core';
-import { collectionData, collection, Firestore, CollectionReference, addDoc, DocumentReference } from '@angular/fire/firestore';
+import {
+  collectionData,
+  collection,
+  Firestore,
+  CollectionReference,
+  addDoc,
+  DocumentReference
+} from '@angular/fire/firestore';
 import { FirebaseAuthService } from './firebase-auth.service';
 import { User } from 'firebase/auth';
 import { Observable } from 'rxjs';
@@ -21,43 +28,34 @@ export class FirestoreService {
     this.userAuth.user$.subscribe((data: User) => {
       this.user = data;
       if(this.user){
-        const userEntrys = collection(this.firestore, 'Users/' + this.user.uid + '/entries/');
+        const userEntrys = collection(
+          this.firestore,
+          'Users/' + this.user.uid + '/entries/'
+        );
         this.entriesCollection = userEntrys;
         this.entries$ = collectionData(userEntrys) as Observable<Entry[]>;
       }
     })
   }
-  addEntry(
-    date: String,
-    lotNo: Number,
-    address: String,
-    boards: Number,
-    smoothB1: Number,
-    smoothB2: Number,
-    textureB1: Number,
-    textureB2: Number,
-    textureHoQa: Number,
-    repairsOrWarranty: Number,
-    observations: String,
+
+  addEntry(date: String, lotNo: Number, address: String, boards: Number,
+    smoothB1: Number, smoothB2: Number, textureB1: Number, textureB2: Number,
+    textureHoQa: Number, repairsOrWarranty: Number, observations: String,
     image: String[]
   ){
-    let id = objectHash(date + lotNo.toString() + address + boards.toString() + smoothB1.toString() + smoothB2.toString() + textureB1.toString() + textureB2.toString() + textureHoQa.toString() + repairsOrWarranty.toString() + observations + image)
+    let id = objectHash(date + lotNo.toString() + address + boards.toString() +
+      smoothB1.toString() + smoothB2.toString() + textureB1.toString() +
+      textureB2.toString() + textureHoQa.toString() +
+      repairsOrWarranty.toString() + observations + image
+    )
+
     addDoc(this.entriesCollection, <Entry> {
-      id,
-      date,
-      lotNo,
-      address,
-      boards,
-      smoothB1,
-      smoothB2,
-      textureB1,
-      textureB2,
-      textureHoQa,
-      repairsOrWarranty,
-      observations,
-      image
+        id, date, lotNo, address, boards, smoothB1, smoothB2, textureB1,
+        textureB2, textureHoQa, repairsOrWarranty, observations, image
     }).then((documentReference: DocumentReference) => {
         console.log(documentReference);
     });
+
   }
+
 }

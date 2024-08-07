@@ -1,5 +1,5 @@
-<h3>CORNESTONE DRYWALL</h3>
-@if(this.entries != undefined){
+<h3>Most Recent Entries</h3>
+@if(this.entries != undefined && this.user){
   <table>
     <tr>
       <th>Date</th>
@@ -28,6 +28,14 @@
       <td>{{ entry.textureHoQa }}</td>
       <td>{{ entry.repairsOrWarranty }}</td>
       <td>{{ entry.observations }}</td>
+      <td>
+      @for (image of entry.image; track image){
+      <button (click)=downloadFile(image) >
+        {{ getFileNameFromUrl(image) }}
+      </button>
+      <br>
+      }
+      </td>
     </tr>
     }
   </table>

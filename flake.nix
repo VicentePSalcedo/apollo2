@@ -23,6 +23,7 @@
             nodePackages.typescript
             nodePackages.typescript-language-server
             nodePackages.coc-tsserver
+            python3
           ];
           shellHook = ''
           echo "checking @angular/cli is installed"
