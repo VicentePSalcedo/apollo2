@@ -35,7 +35,7 @@ export class EntriesComponent implements OnInit {
   }
 
   sortByDate(data: Entry[]): Entry[] {
-    return data.sort((b, a) => {
+    return data.sort((a, b) => {
       const dateA = new Date(a.date.toString());
       const dateB = new Date(b.date.toString());
       return dateA.getTime() - dateB.getTime();
@@ -59,7 +59,7 @@ export class EntriesComponent implements OnInit {
         this.entries = this.filterDuplicatesByProperty(
           this.sortByDate(entries), 'id'
         );
-      })
+      });
     });
   }
 

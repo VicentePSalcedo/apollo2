@@ -1,6 +1,6 @@
 <h3>Most Recent Entries</h3>
 @if(this.entries != undefined && this.user){
-  <table>
+  <table id="entryTable">
     <tr>
       <th>Date</th>
       <th>Lot No</th>
@@ -30,9 +30,9 @@
       <td>{{ entry.observations }}</td>
       <td>
       @for (image of entry.image; track image){
-      <button (click)=downloadFile(image) >
+      <a (click)=downloadFile(image) >
         {{ getFileNameFromUrl(image) }}
-      </button>
+      </a>
       <br>
       }
       </td>
@@ -40,5 +40,5 @@
     }
   </table>
 } @else {
-  <p>no entries found</p>
+  <p>Please login to view recent entries and make new ones</p>
 }

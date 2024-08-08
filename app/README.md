@@ -1,5 +1,5 @@
-- setup download buttons for each image
 - add total line at the bottom
 - add export as xlsx button
 - configure app checking
 - make it look pretty
+- truncate number of entries in the recent entries list
