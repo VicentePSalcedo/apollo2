@@ -30,9 +30,9 @@
       <td>{{ entry.observations }}</td>
       <td>
       @for (image of entry.image; track image){
-      <a (click)=downloadFile(image) >
+      <p (click)=downloadFile(image) class="entryLink">
         {{ getFileNameFromUrl(image) }}
-      </a>
+      </p>
       <br>
       }
       </td>
