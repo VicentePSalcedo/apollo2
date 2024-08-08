@@ -9,8 +9,8 @@ import {
 } from '@angular/fire/firestore';
 import { FirebaseAuthService } from './firebase-auth.service';
 import { User } from 'firebase/auth';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { Entry } from './entry';
+import { BehaviorSubject } from 'rxjs';
+import { Entry } from '../entry';
 import 'object-hash';
 import objectHash from 'object-hash';
 
