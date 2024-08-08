@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { ref, Storage, getDownloadURL, uploadBytesResumable, getBlob } from '@angular/fire/storage';
+import { ref, Storage, getDownloadURL, uploadBytesResumable } from '@angular/fire/storage';
 import { FirebaseAuthService } from './firebase-auth.service';
 import { User } from 'firebase/auth';
 
@@ -33,7 +33,7 @@ export class CloudStorageService {
       .then((url) => {
         const xhr = new XMLHttpRequest();
         xhr.responseType = 'blob';
-        xhr.onload = (event) => {
+        xhr.onload = () => {
           const blob = xhr.response;
           let blobUrl = URL.createObjectURL(blob);
           window.location.assign(blobUrl);

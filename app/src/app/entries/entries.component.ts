@@ -4,7 +4,7 @@ import { Entry } from '../entry';
 import { User } from 'firebase/auth';
 import { FirebaseAuthService } from '../firebase-auth.service';
 import { CloudStorageService } from '../cloud-storage.service';
-import { BehaviorSubject, skip } from 'rxjs';
+import { skip } from 'rxjs';
 
 @Component({
   selector: 'app-entries',
