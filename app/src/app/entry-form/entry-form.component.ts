@@ -38,11 +38,11 @@ export class EntryFormComponent implements OnInit, OnDestroy {
       date: [this.todaysDate, Validators.required],
       lotNo: ['', Validators.required],
       address: ['', Validators.required],
-      boards: [0, Validators.required],
+      boards: [0],
       boardType: [''],
-      repairsOrWarranty: [0, Validators.required],
+      repairsOrWarranty: [0],
       observations: [''],
-      image: [Validators.required],
+      image: [],
     });
   }
 
@@ -86,8 +86,6 @@ export class EntryFormComponent implements OnInit, OnDestroy {
           image.push(this.user.uid + "/" + file.name);
         }
       }
-
-
     } else {
       image.push('none');
     }
