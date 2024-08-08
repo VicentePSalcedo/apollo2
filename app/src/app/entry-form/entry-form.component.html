@@ -1,14 +1,14 @@
 <form [formGroup]="entry" (ngSubmit)="onSubmit(upload)">
   <ul>
-    <li>
+    <li class="requiredEntry">
       <label for="date">DATE: </label>
       <input type="date" formControlName="date"/>
     </li>
-    <li>
+    <li class="requiredEntry">
       <label for="lotNo">LOT NO: </label>
-      <input type="number" formControlName="lotNo"/>
+      <input type="number" formControlName="lotNo" />
     </li>
-    <li>
+    <li class="requiredEntry">
       <label for="address">ADDRESS: </label>
       <input type="text" formControlName="address"/>
     </li>
