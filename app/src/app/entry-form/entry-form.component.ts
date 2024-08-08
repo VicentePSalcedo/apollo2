@@ -7,10 +7,10 @@ import {
 } from '@angular/forms'
 import { Subscription } from 'rxjs';
 import { User } from 'firebase/auth';
-import { FirebaseAuthService } from '../firebase-auth.service';
-import { FirestoreService } from '../firestore.service';
+import { FirebaseAuthService } from '../services/firebase-auth.service';
+import { FirestoreService } from '../services/firestore.service';
 import { EntriesComponent } from '../entries/entries.component';
-import { CloudStorageService } from '../cloud-storage.service';
+import { CloudStorageService } from '../services/cloud-storage.service';
 
 @Component({
   selector: 'app-entry-form',

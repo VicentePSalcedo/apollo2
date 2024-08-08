@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { FirestoreService } from '../firestore.service';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Entry } from '../entry';
 import { User } from 'firebase/auth';
-import { FirebaseAuthService } from '../firebase-auth.service';
-import { CloudStorageService } from '../cloud-storage.service';
+import { FirebaseAuthService } from '../services/firebase-auth.service';
+import { CloudStorageService } from '../services/cloud-storage.service';
 import { skip } from 'rxjs';
+import { EntriesDataService } from '../services/entries-data.service';
 
 @Component({
   selector: 'app-entries',
@@ -13,15 +13,15 @@ import { skip } from 'rxjs';
   templateUrl: './entries.component.html',
   styleUrl: './entries.component.css'
 })
-export class EntriesComponent implements OnInit {
+export class EntriesComponent implements OnInit, OnDestroy {
 
   entries: Entry[] = [];
   user!: User | null;
 
   constructor(
     private userAuth: FirebaseAuthService,
-    private firestore: FirestoreService,
     private cloudStorage: CloudStorageService,
+    private EntriesDataService: EntriesDataService
   ){
   }
 
@@ -36,32 +36,16 @@ export class EntriesComponent implements OnInit {
     return 'none'
   }
 
-  sortByDate(data: Entry[]): Entry[] {
-    return data.sort((a, b) => {
-      const dateA = new Date(a.date.toString());
-      const dateB = new Date(b.date.toString());
-      return dateA.getTime() - dateB.getTime();
-    });
-  }
-
-  removeDuplicates<T>(array: T[]): T[] {
-    return Array.from(new Set(array));
-  }
-
-  filterDuplicatesByProperty(arr: Entry[], property: keyof Entry): Entry[] {
-    return arr.filter((obj, index, self) => {
-      return self.findIndex(o => o[property] === obj[property]) === index;
-    });
-  }
-
   ngOnInit(): void {
-    this.firestore.entries$.pipe(skip(1)).subscribe((value: Entry[]) => {
+    this.EntriesDataService.entriesData.pipe(skip(1)).subscribe((value: Entry[]) => {
       this.entries = value;
       console.log(this.entries);
     });
     this.userAuth.user$.subscribe((data: User | null) => {
       this.user = data;
-    })
+    });
+  }
+  ngOnDestroy(): void {
   }
 
 }
