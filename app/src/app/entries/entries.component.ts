@@ -4,6 +4,7 @@ import { Entry } from '../entry';
 import { User } from 'firebase/auth';
 import { FirebaseAuthService } from '../firebase-auth.service';
 import { CloudStorageService } from '../cloud-storage.service';
+import { BehaviorSubject, skip } from 'rxjs';
 
 @Component({
   selector: 'app-entries',
@@ -14,14 +15,15 @@ import { CloudStorageService } from '../cloud-storage.service';
 })
 export class EntriesComponent implements OnInit {
 
-  entries?: Entry[];
+  entries: Entry[] = [];
   user!: User | null;
 
   constructor(
     private userAuth: FirebaseAuthService,
     private firestore: FirestoreService,
-    private cloudStorage: CloudStorageService
-  ){ }
+    private cloudStorage: CloudStorageService,
+  ){
+  }
 
   downloadFile(input: string){
     this.cloudStorage.downloadFile(input);
@@ -53,14 +55,13 @@ export class EntriesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.userAuth.user$.subscribe((data: User | null)=> {
-      this.user = data;
-      this.firestore.entries$?.subscribe((entries) => {
-        this.entries = this.filterDuplicatesByProperty(
-          this.sortByDate(entries), 'id'
-        );
-      });
+    this.firestore.entries$.pipe(skip(1)).subscribe((value: Entry[]) => {
+      this.entries = value;
+      console.log(this.entries);
     });
+    this.userAuth.user$.subscribe((data: User | null) => {
+      this.user = data;
+    })
   }
 
 }

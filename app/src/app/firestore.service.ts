@@ -9,7 +9,7 @@ import {
 } from '@angular/fire/firestore';
 import { FirebaseAuthService } from './firebase-auth.service';
 import { User } from 'firebase/auth';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Entry } from './entry';
 import 'object-hash';
 import objectHash from 'object-hash';
@@ -21,19 +21,21 @@ export class FirestoreService {
   private firestore: Firestore = inject(Firestore);
 
   user!: User | null;
-  entries$?: Observable<Entry[]>;
+  entries$: BehaviorSubject<Entry[]> = new BehaviorSubject<Entry[]>([]);
   entriesCollection!: CollectionReference;
 
   constructor(private userAuth: FirebaseAuthService) {
     this.userAuth.user$.subscribe((data: User) => {
       this.user = data;
       if(this.user){
-        const userEntrys = collection(
+        const userEntries = collection(
           this.firestore,
           'Users/' + this.user.uid + '/entries/'
         );
-        this.entriesCollection = userEntrys;
-        this.entries$ = collectionData(userEntrys) as Observable<Entry[]>;
+        this.entriesCollection = userEntries;
+        collectionData(userEntries).subscribe((cData: Entry[]) => {
+          this.entries$.next(cData)
+        });
       }
     })
   }
