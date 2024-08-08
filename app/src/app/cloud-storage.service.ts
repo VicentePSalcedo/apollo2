@@ -30,19 +30,19 @@ export class CloudStorageService {
   }
   downloadFile(input: string) {
     getDownloadURL(ref(this.storage, "Users/" + input))
-    .then((url) => {
-      const xhr = new XMLHttpRequest();
-      xhr.responseType = 'blob';
-      xhr.onload = (event) => {
-        const blob = xhr.response;
-        let blobUrl = URL.createObjectURL(blob);
-        window.location.assign(blobUrl);
-      };
-      xhr.open('GET', url);
-      xhr.send();
-    })
-    .catch((error) => {
-      console.log(error);
+      .then((url) => {
+        const xhr = new XMLHttpRequest();
+        xhr.responseType = 'blob';
+        xhr.onload = (event) => {
+          const blob = xhr.response;
+          let blobUrl = URL.createObjectURL(blob);
+          window.location.assign(blobUrl);
+        };
+        xhr.open('GET', url);
+        xhr.send();
+      })
+      .catch((error) => {
+        console.log(error);
     });
   }
 }
