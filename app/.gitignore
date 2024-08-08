@@ -1,5 +1,6 @@
 # See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
-google-cloud*
+google-cloud-sdk/
+google-cloud-cli-linux-x86_64.tar
 
 
 # Compiled output
