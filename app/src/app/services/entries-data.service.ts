@@ -13,7 +13,9 @@ export class EntriesDataService {
     private firestore: FirestoreService,
   ) {
     this.firestore.entries$.pipe().subscribe((value: Entry[]) => {
-      this.entriesData.next(this.sortByDate(this.removeDuplicates(value)));
+      let uniqueValue = this.removeDuplicates(value);
+      let sortedValue = this.sortByDate(uniqueValue);
+      this.entriesData.next(sortedValue);
     });
   }
 
@@ -33,6 +35,9 @@ export class EntriesDataService {
     return arr.filter((obj, index, self) => {
       return self.findIndex(o => o[property] === obj[property]) === index;
     });
+  }
+  getEntries(): Entry[] {
+    return this.entriesData.getValue();
   }
 
   updateEntriesData(input: Entry[]) {

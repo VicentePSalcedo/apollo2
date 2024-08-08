@@ -1,18 +1,45 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { EntriesComponent } from '../entries/entries.component'
+import {
+  ReactiveFormsModule,
+  Validators,
+  FormBuilder,
+  FormGroup
+} from '@angular/forms'
 import  * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-export-entries',
   standalone: true,
-  imports: [EntriesComponent],
+  imports: [
+    EntriesComponent,
+    ReactiveFormsModule
+  ],
   templateUrl: './export-entries.component.html',
   styleUrl: './export-entries.component.css'
 })
 export class ExportEntriesComponent {
-  fileName: string = "Entries" + this.getTodaysDateYYYYMMDD() + ".xlsx";
+  @ViewChild(EntriesComponent) child?: EntriesComponent;
 
-  constructor(){}
+  fileName: string = "Entries" + this.getTodaysDateYYYYMMDD() + ".xlsx";
+  dateRanges: FormGroup;
+
+  constructor(private fb: FormBuilder){
+    let today = new Date();
+    let thirtyDaysAgo = new Date(today);
+    thirtyDaysAgo.setDate(today.getDate() - 30);
+    this.dateRanges = this.fb.group({
+      startDate: [thirtyDaysAgo, Validators.required],
+      endDate: [today, Validators.required]
+    });
+  }
+
+  onSubmit(){
+    console.log('submitted');
+    let startDate = new Date(this.dateRanges.value.startDate);
+    let endDate = new Date(this.dateRanges.value.endDate);
+    this.child?.filterByDateRange(this.child.entries, startDate, endDate);
+  }
 
   exportToExcel(): void {
     let element = document.getElementById('entryTable');

@@ -1,5 +1,4 @@
-<h3>Most Recent Entries</h3>
-@if(this.entries != undefined){
+@if(this.entriesDisplayed != undefined){
   <table id="entryTable">
     <tr>
       <th>Date</th>
@@ -15,7 +14,7 @@
       <th>Observations</th>
       <th>Image</th>
     </tr>
-    @for (entry of this.entries; track entry.id) {
+    @for (entry of this.entriesDisplayed; track entry.id) {
     <tr>
       <td>{{ entry.date }}</td>
       <td>{{ entry.lotNo }}</td>
