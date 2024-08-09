@@ -1,4 +1,3 @@
-<button (click)=exportToExcel()>Export To XSLX</button>
 <form [formGroup]="dateRanges" (ngSubmit)="onSubmit()">
     <label for="startDate">From:</label>
     <input type="date" formControlName="startDate"/>
@@ -6,4 +5,5 @@
     <input type="date" formControlName="endDate"/>
 <button type="submit" [disabled]="!dateRanges.valid">Submit</button>
 </form>
+<button (click)=exportToExcel()>Export To XSLX</button>
 <app-entries></app-entries>
