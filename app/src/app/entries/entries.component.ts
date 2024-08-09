@@ -5,6 +5,7 @@ import { FirebaseAuthService } from '../services/firebase-auth.service';
 import { CloudStorageService } from '../services/cloud-storage.service';
 import { skip, Subscription } from 'rxjs';
 import { EntriesDataService } from '../services/entries-data.service';
+import { FirestoreService } from '../services/firestore.service';
 
 @Component({
   selector: 'app-entries',
@@ -16,24 +17,60 @@ import { EntriesDataService } from '../services/entries-data.service';
 export class EntriesComponent implements OnInit, OnDestroy {
   private entriesSub$?: Subscription;
   private userSub$?: Subscription;
-  private today: Date;
-  private thirtyDaysAgo: Date;
   private user!: User | null;
 
   entries: Entry[];
   entriesDisplayed: Entry[];
+  smoothB1Total: number = 0;
+  smoothB2Total: number = 0;
+  textureB1Total: number = 0;
+  textureB2Total: number = 0;
+  textureB2HoQa: number = 0;
+  repairsOrWarranty: number = 0;
+  grandTotal: number = 0;
 
   constructor(
     private userAuth: FirebaseAuthService,
     private cloudStorage: CloudStorageService,
-    private EntriesDataService: EntriesDataService
+    private EntriesDataService: EntriesDataService,
+    private firestore: FirestoreService
   ){
-    let { today, thirtyDaysAgo } = this.getTodaysAndPrevious30Days();
-    this.today = today;
-    this.thirtyDaysAgo = thirtyDaysAgo;
     this.entries = this.EntriesDataService.getEntries();
+
+    // ------
+    // This is in the constructor instead of ngOnInit to ensure it is populated
+    // and limited to the last 30 days on routing to differnt pages withing the
+    // app
     this.entriesDisplayed = this.entries;
-    this.filterByDateRange(this.entries, thirtyDaysAgo, today);
+    // let { today, thirtyDaysAgo } = this.getTodaysAndPrevious30Days();
+    //this.filterDisplayedEntriesByDateRange(this.entries, thirtyDaysAgo, today);
+    // ------
+    this.calculateTotals();
+  }
+
+  deleteEntry(input: string){
+    this.firestore.delectEntry(input);
+  }
+
+  calculateTotals() {
+    this.smoothB1Total = 0;
+    this.smoothB2Total = 0;
+    this.textureB1Total = 0;
+    this.textureB2Total = 0;
+    this.textureB2HoQa = 0;
+    this.repairsOrWarranty = 0;
+    this.repairsOrWarranty = 0;
+    this.grandTotal = 0;
+    this.entriesDisplayed.forEach(entry => {
+      this.smoothB1Total = this.smoothB1Total + entry.smoothB1;
+      this.smoothB2Total = this.smoothB2Total + entry.smoothB2;
+      this.textureB1Total = this.textureB1Total + entry.textureB1;
+      this.textureB2Total = this.textureB2Total + entry.textureB2;
+      this.textureB2HoQa = this.textureB2HoQa + entry.textureHoQa;
+      this.repairsOrWarranty = this.repairsOrWarranty + entry.repairsOrWarranty;
+    })
+    this.grandTotal = this.smoothB1Total + this.smoothB2Total + this.textureB1Total
+      + this.textureB2Total + this.textureB2HoQa + this.repairsOrWarranty;
   }
 
   getTodaysAndPrevious30Days(): { today: Date; thirtyDaysAgo: Date } {
@@ -54,17 +91,19 @@ export class EntriesComponent implements OnInit, OnDestroy {
     return 'none'
   }
 
-  filterByDateRange(data: Entry[], startDate: Date, endDate: Date)  {
+  filterDisplayedEntriesByDateRange(data: Entry[], startDate: Date, endDate: Date)  {
     this.entriesDisplayed = data.filter(item => {
       const itemDate = new Date(item.date); // Ensure item.date is a Date object
       return itemDate >= startDate && itemDate <= endDate;
     });
+    this.calculateTotals();
   }
 
   ngOnInit(): void {
     this.entriesSub$ = this.EntriesDataService.entriesData.pipe(skip(1)).subscribe((value: Entry[]) => {
       this.entries = value;
-      this.filterByDateRange(this.entries, this.thirtyDaysAgo, this.today);
+      this.entriesDisplayed = this.entries;
+      this.calculateTotals();
     });
     this.userSub$ = this.userAuth.user$.subscribe((data: User | null) => {
       this.user = data;

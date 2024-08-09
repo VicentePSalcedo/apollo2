@@ -19,8 +19,14 @@ export class EntriesDataService {
     });
   }
 
+  filterByDateRange(data: Entry[], startDate: Date, endDate: Date) {
+    this.entriesData.next(data.filter(item => {
+      const itemDate = new Date(item.date); // Ensure item.date is a Date object
+      return itemDate >= startDate && itemDate <= endDate;
+    }));
+  }
   sortByDate(data: Entry[]): Entry[] {
-    return data.sort((a, b) => {
+    return data.sort((b, a) => {
       const dateA = new Date(a.date.toString());
       const dateB = new Date(b.date.toString());
       return dateA.getTime() - dateB.getTime();

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import {
   ReactiveFormsModule,
   Validators,
@@ -23,10 +23,12 @@ import { CloudStorageService } from '../services/cloud-storage.service';
   ]
 })
 export class EntryFormComponent implements OnInit, OnDestroy {
+  @ViewChild(EntriesComponent) child?: EntriesComponent;
+
+  private _userSubscription$!: Subscription;
+
   entry: FormGroup;
   user!: User | null;
-  todaysDate: String = this.getTodaysDateYYYYMMDD();
-  private _userSubscription$!: Subscription;
 
   constructor(
     private fb: FormBuilder,
@@ -35,32 +37,25 @@ export class EntryFormComponent implements OnInit, OnDestroy {
     private cloadStorage: CloudStorageService,
   ){
     this.entry = this.fb.group({
-      date: [this.todaysDate, Validators.required],
-      lotNo: ['', Validators.required],
+      date: [Validators.required],
+      lotNo: [Validators.required],
       address: ['', Validators.required],
-      boards: [0],
-      boardType: [''],
-      repairsOrWarranty: [0],
-      observations: [''],
+      boards: [Validators.required],
+      boardType: [Validators.required],
+      observations: [],
       image: [],
     });
   }
 
-  getTodaysDateYYYYMMDD(): string {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
 
   onSubmit(input: HTMLInputElement) {
     if(!this.user) return;
-    let smoothB1: Number = 0;
-    let smoothB2: Number = 0;
-    let textureB1: Number = 0;
-    let textureB2: Number = 0;
-    let textureHoQa: Number = 0;
+    let smoothB1: number = 0;
+    let smoothB2: number = 0;
+    let textureB1: number = 0;
+    let textureB2: number = 0;
+    let textureHoQa: number = 0;
+    let repairsOrWarranty: number = 0;
     let image: string[] = [];
 
     if (this.entry.value.boardType == 'B1 Liso') {
@@ -75,6 +70,9 @@ export class EntryFormComponent implements OnInit, OnDestroy {
       textureB2 = this.entry.value.boards * 0.3;
     } else if (this.entry.value.boardType == 'HO/QA') {
       textureHoQa = this.entry.value.boards * 0.2;
+    } else if (this.entry.value.boardType == 'repairsOrWarranty') {
+      repairsOrWarranty = this.entry.value.boards;
+      this.entry.value.boards = 0;
     }
 
     if(input.files){
@@ -100,12 +98,13 @@ export class EntryFormComponent implements OnInit, OnDestroy {
       textureB1,
       textureB2,
       textureHoQa,
-      this.entry.value.repairsOrWarranty,
+      repairsOrWarranty,
       this.entry.value.observations,
       image
     );
 
     this.cloadStorage.uploadFile(input);
+    this.child?.calculateTotals();
   }
 
   ngOnInit(): void {

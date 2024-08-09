@@ -1,42 +1,71 @@
 @if(this.entriesDisplayed != undefined){
   <table id="entryTable">
-    <tr>
-      <th>Date</th>
-      <th>Lot No</th>
-      <th>Address</th>
-      <th>Boards</th>
-      <th>Smooth<br>B1</th>
-      <th>Smooth<br>B2</th>
-      <th>Texture<br>B1</th>
-      <th>Texture<br>B2</th>
-      <th>Texture<br>HO/QA</th>
-      <th>Repairs/Warranty</th>
-      <th>Observations</th>
-      <th>Image</th>
-    </tr>
-    @for (entry of this.entriesDisplayed; track entry.id) {
-    <tr>
-      <td>{{ entry.date }}</td>
-      <td>{{ entry.lotNo }}</td>
-      <td>{{ entry.address }}</td>
-      <td>{{ entry.boards }}</td>
-      <td>{{ entry.smoothB1 }}</td>
-      <td>{{ entry.smoothB2 }}</td>
-      <td>{{ entry.textureB1 }}</td>
-      <td>{{ entry.textureB2 }}</td>
-      <td>{{ entry.textureHoQa }}</td>
-      <td>{{ entry.repairsOrWarranty }}</td>
-      <td>{{ entry.observations }}</td>
-      <td>
-      @for (image of entry.image; track image){
+  <tr>
+    <th>Date</th>
+    <th>Lot No</th>
+    <th>Address</th>
+    <th>Boards</th>
+    <th>Smooth<br>B1</th>
+    <th>Smooth<br>B2</th>
+    <th>Texture<br>B1</th>
+    <th>Texture<br>B2</th>
+    <th>Texture<br>HO/QA</th>
+    <th>Repairs/Warranty</th>
+    <th>Observations</th>
+    <th>Image</th>
+  </tr>
+  @for (entry of this.entriesDisplayed; track entry.id) {
+  <tr>
+    <td>{{ entry.date }}</td>
+    <td>{{ entry.lotNo }}</td>
+    <td>{{ entry.address }}</td>
+    <td>@if(entry.boards > 0){{{ entry.boards }}}</td>
+    <td>@if(entry.smoothB1 > 0){{{ entry.smoothB1 }}}</td>
+    <td>@if(entry.smoothB2 > 0){{{ entry.smoothB2 }}}</td>
+    <td>@if(entry.textureB1 > 0){{{ entry.textureB1 }}}</td>
+    <td>@if(entry.textureB2 > 0){{{ entry.textureB2 }}}</td>
+    <td>@if(entry.textureHoQa > 0){{{ entry.textureHoQa }}}</td>
+    <td>@if(entry.repairsOrWarranty > 0){ {{ entry.repairsOrWarranty }} }</td>
+    <td>{{ entry.observations }}</td>
+    <td>
+    @for (image of entry.image; track image){
       <a (click)=downloadFile(image) class="entryLink">
         {{ getFileNameFromUrl(image) }}
       </a>
       <br>
-      }
-      </td>
-    </tr>
     }
+    </td>
+    <button (click)=deleteEntry(entry.id)>delete</button>
+  </tr>
+  }
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <th>Total $: </th>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td>@if(smoothB1Total > 0){{{ smoothB1Total }}}</td>
+    <td>@if(smoothB2Total > 0){{{ smoothB2Total }}}</td>
+    <td>@if(textureB1Total > 0){{{ textureB1Total }}}</td>
+    <td>@if(textureB2Total > 0){{{ textureB2Total }}}</td>
+    <td>@if(textureB2HoQa > 0){{{ textureB2HoQa }}}</td>
+    <td>@if(repairsOrWarranty > 0){{{ repairsOrWarranty }}}</td>
+    <td>@if(grandTotal > 0){{{ grandTotal }}}</td>
+    <td></td>
+  </tr>
   </table>
 } @else {
   <p>Please login to view recent entries and make new ones</p>

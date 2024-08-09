@@ -1,15 +1,15 @@
 export interface Entry {
   id: string;
   date: string;
-  lotNo: Number;
+  lotNo: number;
   address: string;
-  boards: Number;
-  smoothB1: Number;
-  smoothB2: Number;
-  textureB1: Number;
-  textureB2: Number;
-  textureHoQa: Number;
-  repairsOrWarranty: Number;
+  boards: number;
+  smoothB1: number;
+  smoothB2: number;
+  textureB1: number;
+  textureB2: number;
+  textureHoQa: number;
+  repairsOrWarranty: number;
   observations: string;
   image: string[];
 }

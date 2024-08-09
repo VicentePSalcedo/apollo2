@@ -1,5 +1,8 @@
-- add total line at the bottom
-- add export as xlsx button
-- configure app checking
+Minimum viable product:
+- do excel file formatting
 - make it look pretty
-- truncate number of entries in the recent entries list
+- configure app checking
+
+Optional:
+- add an ability to edit entries
+- add a feature to change settings

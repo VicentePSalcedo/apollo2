@@ -4,14 +4,14 @@ import {
   collection,
   Firestore,
   CollectionReference,
-  addDoc,
-  DocumentReference
+  doc,
+  setDoc,
+  deleteDoc
 } from '@angular/fire/firestore';
 import { FirebaseAuthService } from './firebase-auth.service';
 import { User } from 'firebase/auth';
 import { BehaviorSubject } from 'rxjs';
 import { Entry } from '../entry';
-import 'object-hash';
 import objectHash from 'object-hash';
 
 @Injectable({
@@ -19,6 +19,7 @@ import objectHash from 'object-hash';
 })
 export class FirestoreService {
   private firestore: Firestore = inject(Firestore);
+  private entriesPath: string = '';
 
   user!: User | null;
   entries$: BehaviorSubject<Entry[]> = new BehaviorSubject<Entry[]>([]);
@@ -28,35 +29,51 @@ export class FirestoreService {
     this.userAuth.user$.subscribe((data: User) => {
       this.user = data;
       if(this.user){
-        const userEntries = collection(
-          this.firestore,
-          'Users/' + this.user.uid + '/entries/'
-        );
+        this.entriesPath = 'Users/' + this.user.uid + '/entries/';
+        const userEntries = collection(this.firestore, this.entriesPath);
         this.entriesCollection = userEntries;
         collectionData(userEntries).subscribe((cData: Entry[]) => {
           this.entries$.next(cData)
         });
+        console.log("fetched from firestore");
       }
     })
   }
 
-  addEntry(date: String, lotNo: Number, address: String, boards: Number,
-    smoothB1: Number, smoothB2: Number, textureB1: Number, textureB2: Number,
-    textureHoQa: Number, repairsOrWarranty: Number, observations: String,
-    image: String[]
+  delectEntry(input: string){
+    const docRef = doc(this.firestore, this.entriesPath, input)
+    deleteDoc(docRef);
+  }
+
+  addEntry(date: string, lotNo: number, address: string, boards: number,
+    smoothB1: number, smoothB2: number, textureB1: number, textureB2: number,
+    textureHoQa: number, repairsOrWarranty: number, observations: string,
+    image: string[]
   ){
     let id = objectHash(date + lotNo.toString() + address + boards.toString() +
       smoothB1.toString() + smoothB2.toString() + textureB1.toString() +
       textureB2.toString() + textureHoQa.toString() +
       repairsOrWarranty.toString() + observations + image
     )
-
-    addDoc(this.entriesCollection, <Entry> {
-        id, date, lotNo, address, boards, smoothB1, smoothB2, textureB1,
-        textureB2, textureHoQa, repairsOrWarranty, observations, image
-    }).then((documentReference: DocumentReference) => {
-        console.log(documentReference);
-    });
+    if(this.entriesPath != ''){
+      const docRef = doc(this.firestore, this.entriesPath, id);
+      const docData = {
+        id: id,
+        date: date,
+        lotNo: lotNo,
+        address: address,
+        boards: boards,
+        smoothB1: smoothB1,
+        smoothB2: smoothB2,
+        textureB1: textureB1,
+        textureB2: textureB2,
+        textureHoQa: textureHoQa,
+        repairsOrWarranty: repairsOrWarranty,
+        observations: observations,
+        image: image
+      }
+      setDoc(docRef, docData);
+    }
 
   }
 
