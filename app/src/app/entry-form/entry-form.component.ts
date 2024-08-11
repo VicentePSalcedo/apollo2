@@ -40,7 +40,7 @@ export class EntryFormComponent implements OnInit, OnDestroy {
       date: [Validators.required],
       lotNo: [Validators.required],
       address: ['', Validators.required],
-      boards: [Validators.required],
+      boards: [0, Validators.required],
       boardType: [Validators.required],
       observations: [],
       image: [],
