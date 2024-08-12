@@ -3,3 +3,14 @@
     cursor: pointer;
     text-decoration: underline;
 }
+table {
+  margin: 0 auto;
+}
+th {
+  text-align: center;
+  border: 1px solid black;
+}
+td {
+  text-align: center;
+  border: 1px solid black;
+}

@@ -7,6 +7,7 @@ export interface Entry {
   boards: number;
   smoothB1: number;
   smoothB2: number;
+  smoothHoQa: number;
   textureB1: number;
   textureB2: number;
   textureHoQa: number;

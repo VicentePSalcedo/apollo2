@@ -5,37 +5,42 @@
     <th>Lot No</th>
     <th>Address</th>
     <th>Boards</th>
-    <th>Smooth<br>B1</th>
-    <th>Smooth<br>B2</th>
-    <th>Texture<br>B1</th>
-    <th>Texture<br>B2</th>
-    <th>Texture<br>HO/QA</th>
+    <th>Smooth B1</th>
+    <th>Smooth B2</th>
+    <th>Smooth HO/QA</th>
+    <th>Texture B1</th>
+    <th>Texture B2</th>
+    <th>Texture HO/QA</th>
     <th>Repairs/Warranty</th>
     <th>Observations</th>
-    <th>Image</th>
+    <th>Images</th>
+    <th></th>
   </tr>
   @for (entry of this.entriesDisplayed; track entry.id) {
   <tr>
     <td>{{ entry.date }}</td>
     <td>{{ entry.lotNo }}</td>
     <td>{{ entry.address }}</td>
-    <td>@if(entry.boards > 0){{{ entry.boards }}}</td>
-    <td>@if(entry.smoothB1 > 0){{{ entry.smoothB1 }}}</td>
-    <td>@if(entry.smoothB2 > 0){{{ entry.smoothB2 }}}</td>
-    <td>@if(entry.textureB1 > 0){{{ entry.textureB1 }}}</td>
-    <td>@if(entry.textureB2 > 0){{{ entry.textureB2 }}}</td>
-    <td>@if(entry.textureHoQa > 0){{{ entry.textureHoQa }}}</td>
-    <td>@if(entry.repairsOrWarranty > 0){ {{ entry.repairsOrWarranty }} }</td>
+    <td>@if(entry.boards > 0){{{ entry.boards.toFixed(2) }}}</td>
+    <td>@if(entry.smoothB1 > 0){{{ entry.smoothB1.toFixed(2) }}}</td>
+    <td>@if(entry.smoothB2 > 0){{{ entry.smoothB2.toFixed(2) }}}</td>
+    <td>@if(entry.smoothHoQa > 0){{{ entry.smoothHoQa.toFixed(2) }}}</td>
+    <td>@if(entry.textureB1 > 0){{{ entry.textureB1.toFixed(2) }}}</td>
+    <td>@if(entry.textureB2 > 0){{{ entry.textureB2.toFixed(2) }}}</td>
+    <td>@if(entry.textureHoQa > 0){{{ entry.textureHoQa.toFixed(2) }}}</td>
+    <td>@if(entry.repairsOrWarranty > 0){ {{ entry.repairsOrWarranty.toFixed(2) }} }</td>
     <td>{{ entry.observations }}</td>
     <td>
     @for (image of entry.image; track image){
-      <a (click)=downloadFile(image) class="entryLink">
+      <a (click)=openFile(image) class="entryLink">
         {{ getFileNameFromUrl(image) }}
       </a>
       <br>
     }
     </td>
-    <button (click)=deleteEntry(entry.id)>delete</button>
+    <td>
+      <button (click)=deleteEntry(entry.id)>delete</button>
+    </td>
   </tr>
   }
   <tr>
@@ -43,27 +48,15 @@
     <td></td>
     <td></td>
     <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <th>Total $: </th>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td>@if(smoothB1Total > 0){{{ smoothB1Total }}}</td>
-    <td>@if(smoothB2Total > 0){{{ smoothB2Total }}}</td>
-    <td>@if(textureB1Total > 0){{{ textureB1Total }}}</td>
-    <td>@if(textureB2Total > 0){{{ textureB2Total }}}</td>
-    <td>@if(textureB2HoQa > 0){{{ textureB2HoQa }}}</td>
-    <td>@if(repairsOrWarranty > 0){{{ repairsOrWarranty }}}</td>
-    <td>@if(grandTotal > 0){{{ grandTotal }}}</td>
+    <td>@if(smoothB1Total > 0){{{ smoothB1Total.toFixed(2) }}}</td>
+    <td>@if(smoothB2Total > 0){{{ smoothB2Total.toFixed(2) }}}</td>
+    <td>{{ smoothHoQaTotal.toFixed(2) }}</td>
+    <td>@if(textureB1Total > 0){{{ textureB1Total.toFixed(2) }}}</td>
+    <td>@if(textureB2Total > 0){{{ textureB2Total.toFixed(2) }}}</td>
+    <td>@if(textureHoQa > 0){{{ textureHoQa.toFixed(2) }}}</td>
+    <td>@if(repairsOrWarranty > 0){{{ repairsOrWarranty.toFixed(2) }}}</td>
+    <td>Total$: </td>
+    <td>@if(grandTotal > 0){{{ grandTotal.toFixed(2) }}}</td>
     <td></td>
   </tr>
   </table>

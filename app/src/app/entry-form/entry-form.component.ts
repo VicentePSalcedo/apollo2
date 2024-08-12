@@ -52,6 +52,7 @@ export class EntryFormComponent implements OnInit, OnDestroy {
     if(!this.user) return;
     let smoothB1: number = 0;
     let smoothB2: number = 0;
+    let smoothHoQa: number = 0;
     let textureB1: number = 0;
     let textureB2: number = 0;
     let textureHoQa: number = 0;
@@ -63,7 +64,7 @@ export class EntryFormComponent implements OnInit, OnDestroy {
     } else if (this.entry.value.boardType == 'B2 Liso') {
       smoothB2 = this.entry.value.boards * 0.75;
     } else if (this.entry.value.boardType == 'HO/QA smo') {
-      textureHoQa = this.entry.value.boards * 0.45;
+      smoothHoQa = this.entry.value.boards * 0.45;
     } else if (this.entry.value.boardType == 'B1 text') {
       textureB1 = this.entry.value.boards * 0.5;
     } else if (this.entry.value.boardType == 'B2 text') {
@@ -95,6 +96,7 @@ export class EntryFormComponent implements OnInit, OnDestroy {
       this.entry.value.boards,
       smoothB1,
       smoothB2,
+      smoothHoQa,
       textureB1,
       textureB2,
       textureHoQa,
@@ -104,7 +106,6 @@ export class EntryFormComponent implements OnInit, OnDestroy {
     );
 
     this.cloadStorage.uploadFile(input);
-    this.child?.calculateTotals();
   }
 
   ngOnInit(): void {

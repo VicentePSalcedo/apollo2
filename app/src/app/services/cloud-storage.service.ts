@@ -28,7 +28,8 @@ export class CloudStorageService {
       }
     }
   }
-  downloadFile(input: string) {
+
+  openFile(input: string) {
     getDownloadURL(ref(this.storage, "Users/" + input))
       .then((url) => {
         const xhr = new XMLHttpRequest();

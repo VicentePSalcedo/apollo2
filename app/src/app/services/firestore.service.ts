@@ -35,7 +35,6 @@ export class FirestoreService {
         collectionData(userEntries).subscribe((cData: Entry[]) => {
           this.entries$.next(cData)
         });
-        console.log("fetched from firestore");
       }
     })
   }
@@ -46,9 +45,9 @@ export class FirestoreService {
   }
 
   addEntry(date: string, lotNo: number, address: string, boards: number,
-    smoothB1: number, smoothB2: number, textureB1: number, textureB2: number,
-    textureHoQa: number, repairsOrWarranty: number, observations: string,
-    image: string[]
+    smoothB1: number, smoothB2: number, smoothHoQa: number, textureB1: number,
+    textureB2: number, textureHoQa: number, repairsOrWarranty: number,
+    observations: string, image: string[]
   ){
     let id = objectHash(date + lotNo.toString() + address + boards.toString() +
       smoothB1.toString() + smoothB2.toString() + textureB1.toString() +
@@ -66,6 +65,7 @@ export class FirestoreService {
         boards: boards,
         smoothB1: smoothB1,
         smoothB2: smoothB2,
+        smoothHoQa: smoothHoQa,
         textureB1: textureB1,
         textureB2: textureB2,
         textureHoQa: textureHoQa,

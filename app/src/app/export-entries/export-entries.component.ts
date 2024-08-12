@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { EntriesComponent } from '../entries/entries.component'
 import {
   ReactiveFormsModule,
@@ -9,6 +9,7 @@ import {
 import { Entry } from '../entry';
 import Excel from 'exceljs';
 import { saveAs } from 'file-saver';
+import { EntriesDataService } from '../services/entries-data.service';
 
 @Component({
   selector: 'app-export-entries',
@@ -21,30 +22,25 @@ import { saveAs } from 'file-saver';
   styleUrl: './export-entries.component.css'
 })
 export class ExportEntriesComponent {
-  @ViewChild(EntriesComponent) child?: EntriesComponent;
 
   private fileName: string = "./Entries" + this.getTodaysDateYYYYMMDD() + ".xlsx";
 
   dateRanges: FormGroup;
 
-  constructor(private fb: FormBuilder){
-    let today = new Date();
-    let thirtyDaysAgo = new Date(today);
-    thirtyDaysAgo.setDate(today.getDate() - 30);
+  constructor(private fb: FormBuilder, private entries: EntriesDataService){
     this.dateRanges = this.fb.group({
-      startDate: [thirtyDaysAgo, Validators.required],
-      endDate: [today, Validators.required]
+      startDate: [Validators.required],
+      endDate: [Validators.required]
     });
   }
 
   onSubmit(){
-    console.log('submitted');
     let startDate = new Date(this.dateRanges.value.startDate);
     let endDate = new Date(this.dateRanges.value.endDate);
-    this.child?.filterDisplayedEntriesByDateRange(this.child.entries, startDate, endDate);
+    this.entries.filterDisplayedEntriesByDateRange(startDate, endDate);
   }
 
-  exportToExcel(): void {
+  async exportToExcel() {
     const workbook = new Excel.Workbook();
     const worksheet = workbook.addWorksheet('WEEK');
     const headers = [
@@ -52,18 +48,18 @@ export class ExportEntriesComponent {
       { key: 'lotNo', header: 'LOT No' },
       { key: 'address', header: 'ADDRESS' },
       { key: 'boards', header: 'BOARDS' },
-      { key: 'smoothB1', header: 'B1' },
-      { key: 'smoothB2', header: 'B2' },
-      { key: 'textureB1', header: 'B1' },
-      { key: 'textureB2', header: 'B2' },
-      { key: 'textureHoQa', header: 'HO/QA' },
+      { key: 'smoothB1', header: 'Smooth B1' },
+      { key: 'smoothB2', header: 'Smooth B2' },
+      { key: 'smoothHoQa', header: 'Smooth HO/QA' },
+      { key: 'textureB1', header: 'Texture B1' },
+      { key: 'textureB2', header: 'Texture B2' },
+      { key: 'textureHoQa', header: 'Texture HO/QA' },
       { key: 'repairsOrWarranty', header: 'REPAIRS/WARRANTY'},
       { key: 'observations', header: 'OBSERVATIONS' },
-      { key: 'total' }
+      { key: 'images' , header: 'Images'}
     ];
     worksheet.columns = headers;
-    if (!this.child) return;
-    this.child.entriesDisplayed.forEach((entry: Entry) => {
+    this.entries.entriesDisplayed.getValue().forEach((entry: Entry) => {
       let newRow = {
         date: entry.date,
         lotNo: entry.lotNo,
@@ -71,6 +67,7 @@ export class ExportEntriesComponent {
         boards: this.checkForZeros(entry.boards),
         smoothB1: this.checkForZeros(entry.smoothB1),
         smoothB2: this.checkForZeros(entry.smoothB2),
+        smoothHoQa: this.checkForZeros(entry.smoothHoQa),
         textureB1: this.checkForZeros(entry.textureB1),
         textureB2: this.checkForZeros(entry.textureB2),
         textureHoQa: this.checkForZeros(entry.textureHoQa),
@@ -80,14 +77,15 @@ export class ExportEntriesComponent {
     });
     worksheet.addRow({})
     let totatLine = {
-      smoothB1: this.child.smoothB1Total,
-      smoothB2: this.child.smoothB2Total,
-      textureB1: this.child.textureB1Total,
-      textureB2: this.child.textureB2Total,
-      textureHoQa: this.child.textureB2HoQa,
-      repairsOrWarranty: this.child.repairsOrWarranty,
+      smoothB1: this.entries.smoothB1Total.getValue(),
+      smoothB2: this.entries.smoothB2Total.getValue(),
+      smoothHoQa: this.entries.smoothHoQaTotal.getValue(),
+      textureB1: this.entries.textureB1Total.getValue(),
+      textureB2: this.entries.textureB2Total.getValue(),
+      textureHoQa: this.entries.textureHoQa.getValue(),
+      repairsOrWarranty: this.entries.repairsOrWarranty.getValue(),
       observations: 'Total$: ',
-      total: this.child.grandTotal
+      images: this.entries.grandTotal.getValue(),
     };
     worksheet.addRow(totatLine);
     workbook.xlsx.writeBuffer().then((buffer) => {
