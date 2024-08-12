@@ -1,8 +1,7 @@
 Minimum viable product:
 
--> add image url to excel file
-
-- add app check back
+- add image url to excel file
+- pad cells so its not camped
 
 - do excel file formatting
 - make it look pretty

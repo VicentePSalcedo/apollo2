@@ -29,6 +29,10 @@ export class CloudStorageService {
     }
   }
 
+  async getFileUrl(input: string): Promise<string>{
+    return getDownloadURL(ref(this.storage, "Users/" + input));
+  }
+
   openFile(input: string) {
     getDownloadURL(ref(this.storage, "Users/" + input))
       .then((url) => {

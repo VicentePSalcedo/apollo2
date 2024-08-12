@@ -23,5 +23,8 @@ export const appConfig: ApplicationConfig = {
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
     provideStorage(() => getStorage()),
+    provideAppCheck(() => initializeAppCheck(getApp(), {
+      provider: new ReCaptchaV3Provider('6LfFXCMqAAAAAMoupfGB5a3YDH3coVHaWcEUvIOh'),
+    }))
   ]
 };

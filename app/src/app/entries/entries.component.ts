@@ -55,7 +55,6 @@ export class EntriesComponent implements OnInit, OnDestroy {
     this.firestore.delectEntry(input);
   }
 
-
   openFile(input: string){
     this.cloudStorage.openFile(input);
   }

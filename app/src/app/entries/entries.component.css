@@ -5,10 +5,12 @@
 }
 table {
   margin: 0 auto;
+  border: 1px solid black;
 }
 th {
   text-align: center;
-  border: 1px solid black;
+  padding-right: 25px;
+  padding-left: 25px;
 }
 td {
   text-align: center;
