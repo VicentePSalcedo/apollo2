@@ -13,35 +13,15 @@ export class EntriesDataService {
     private firestore: FirestoreService,
   ) {
     this.firestore.entries$.pipe().subscribe((value: Entry[]) => {
-      let uniqueValue = this.removeDuplicates(value);
-      let sortedValue = this.sortByDate(uniqueValue);
+      let sortedValue = this.sortByTimeStamp(value);
       this.entriesData.next(sortedValue);
     });
   }
 
-  filterByDateRange(data: Entry[], startDate: Date, endDate: Date) {
-    this.entriesData.next(data.filter(item => {
-      const itemDate = new Date(item.date); // Ensure item.date is a Date object
-      return itemDate >= startDate && itemDate <= endDate;
-    }));
-  }
-  sortByDate(data: Entry[]): Entry[] {
-    return data.sort((b, a) => {
-      const dateA = new Date(a.date.toString());
-      const dateB = new Date(b.date.toString());
-      return dateA.getTime() - dateB.getTime();
-    });
+  sortByTimeStamp(data: Entry[]): Entry[] {
+    return data.sort((b, a) => b.timeStamp - a.timeStamp);
   }
 
-  removeDuplicates<T>(array: T[]): T[] {
-    return Array.from(new Set(array));
-  }
-
-  filterDuplicatesByProperty(arr: Entry[], property: keyof Entry): Entry[] {
-    return arr.filter((obj, index, self) => {
-      return self.findIndex(o => o[property] === obj[property]) === index;
-    });
-  }
   getEntries(): Entry[] {
     return this.entriesData.getValue();
   }

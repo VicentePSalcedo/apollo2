@@ -57,8 +57,9 @@ export class FirestoreService {
     )
     if(this.entriesPath != ''){
       const docRef = doc(this.firestore, this.entriesPath, id);
-      const docData = {
+      const docData: Entry = {
         id: id,
+        timeStamp: new Date().getTime(),
         date: date,
         lotNo: lotNo,
         address: address,

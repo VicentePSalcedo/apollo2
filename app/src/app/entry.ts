@@ -1,5 +1,6 @@
 export interface Entry {
   id: string;
+  timeStamp: number;
   date: string;
   lotNo: number;
   address: string;

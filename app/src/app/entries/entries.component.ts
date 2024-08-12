@@ -36,14 +36,11 @@ export class EntriesComponent implements OnInit, OnDestroy {
     private firestore: FirestoreService
   ){
     this.entries = this.EntriesDataService.getEntries();
-
     // ------
     // This is in the constructor instead of ngOnInit to ensure it is populated
     // and limited to the last 30 days on routing to differnt pages withing the
     // app
     this.entriesDisplayed = this.entries;
-    // let { today, thirtyDaysAgo } = this.getTodaysAndPrevious30Days();
-    //this.filterDisplayedEntriesByDateRange(this.entries, thirtyDaysAgo, today);
     // ------
     this.calculateTotals();
   }
@@ -71,13 +68,6 @@ export class EntriesComponent implements OnInit, OnDestroy {
     })
     this.grandTotal = this.smoothB1Total + this.smoothB2Total + this.textureB1Total
       + this.textureB2Total + this.textureB2HoQa + this.repairsOrWarranty;
-  }
-
-  getTodaysAndPrevious30Days(): { today: Date; thirtyDaysAgo: Date } {
-    const today = new Date();
-    const thirtyDaysAgo = new Date(today);
-    thirtyDaysAgo.setDate(today.getDate() - 30);
-    return { today, thirtyDaysAgo };
   }
 
   downloadFile(input: string){
