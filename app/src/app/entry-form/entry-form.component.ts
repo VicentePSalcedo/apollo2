@@ -47,6 +47,9 @@ export class EntryFormComponent implements OnInit, OnDestroy {
     });
   }
 
+  clearImageSelection(){
+    this.entry.reset();
+  }
 
   onSubmit(input: HTMLInputElement) {
     if(!this.user) return;

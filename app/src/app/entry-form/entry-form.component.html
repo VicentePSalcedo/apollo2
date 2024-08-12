@@ -37,6 +37,7 @@
       <input id="image" type="file" multiple="multiple" formControlName="image" #upload/>
     </li>
   </ul>
-  <button type="submit" [disabled]="!entry.valid">Submit</button>
 </form>
+  <button (click)=onSubmit(upload) [disabled]="!entry.valid">Submit</button>
+  <button (click)=clearImageSelection()>Clear</button>
 <app-entries />

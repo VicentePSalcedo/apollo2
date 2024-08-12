@@ -40,7 +40,10 @@ export class ExcelService {
           textureB2: this.checkForZeros(entry.textureB2),
           textureHoQa: this.checkForZeros(entry.textureHoQa),
           repairsOrWarranty: this.checkForZeros(entry.repairsOrWarranty),
-          images: images
+          images: {
+            text: images,
+            hyperlink: images
+          }
         }
         this.rows.push(newRow);
       });
