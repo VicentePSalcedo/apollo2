@@ -86,7 +86,7 @@ export class ExcelService {
     });
     workbook.xlsx.writeBuffer().then((buffer) => {
       const blob = new Blob([buffer]);
-      saveAs(blob, `${this.fileName}.xlsx`);
+      saveAs(blob, `${this.fileName}`);
     });
   }
 
