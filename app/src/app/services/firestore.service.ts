@@ -36,7 +36,7 @@ export class FirestoreService {
           this.entries$.next(cData)
         });
       }
-    })
+    });
   }
 
   delectEntry(input: string){

@@ -4,6 +4,8 @@ import Excel from 'exceljs';
 import { saveAs } from 'file-saver';
 import { EntriesDataService } from '../services/entries-data.service';
 import { CloudStorageService } from './cloud-storage.service';
+import { User } from 'firebase/auth';
+import { FirebaseAuthService } from './firebase-auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,20 +14,29 @@ export class ExcelService {
 
   private fileName: string = "./Entries" + this.getTodaysDateYYYYMMDD() + ".xlsx";
   private rows: Row[] = [];
+  private user!: User;
 
   constructor(
     private entries: EntriesDataService,
-    private cloudStorage: CloudStorageService)
+    private cloudStorage: CloudStorageService,
+    private userAuth: FirebaseAuthService,
+  )
   {
+
+    this.userAuth.user$.subscribe((data: User) => {
+      this.user = data;
+    });
     this.entries.entriesDisplayed.subscribe((entries: Entry[]) => {
       this.rows = [];
       entries.forEach(entry => {
-        let images: string[] = [];
+        let imagesUrls: string[] = [];
+        let imagesText: string[] = [];
         if(entry.image){
           for(let i = 0; i < entry.image.length; i++){
             this.cloudStorage.getFileUrl(entry.image[i]).then(url => {
-              images.push(url);
+              imagesUrls.push(url);
             });
+            imagesText.push(this.getFileNameFromUrl(entry.image[i]));
           }
         }
         let newRow = {
@@ -41,8 +52,8 @@ export class ExcelService {
           textureHoQa: this.checkForZeros(entry.textureHoQa),
           repairsOrWarranty: this.checkForZeros(entry.repairsOrWarranty),
           images: {
-            text: images,
-            hyperlink: images
+            text: imagesText,
+            hyperlink: imagesUrls
           }
         }
         this.rows.push(newRow);
@@ -50,9 +61,18 @@ export class ExcelService {
     });
   }
 
+  getFileNameFromUrl(fileUrl: string): string {
+    if(this.user){
+      return fileUrl.replace(this.user.uid + "/", "");
+    }
+    return 'none'
+  }
+
   exportToExcel() {
+
     let workbook = new Excel.Workbook();
     let worksheet = workbook.addWorksheet('WEEK');
+
     const headers = [
       { key: 'date', header: 'DATE' },
       { key: 'lotNo', header: 'LOT No' },
@@ -68,11 +88,14 @@ export class ExcelService {
       { key: 'observations', header: 'OBSERVATIONS' },
       { key: 'images' , header: 'Images'}
     ];
+
     worksheet.columns = headers;
     this.rows.forEach((row: Row) => {
       worksheet.addRow(row);
     });
+
     worksheet.addRow({})
+
     worksheet.addRow({
       smoothB1: this.entries.smoothB1Total.getValue(),
       smoothB2: this.entries.smoothB2Total.getValue(),
@@ -84,10 +107,12 @@ export class ExcelService {
       observations: 'Total$: ',
       images: this.entries.grandTotal.getValue(),
     });
+
     workbook.xlsx.writeBuffer().then((buffer) => {
       const blob = new Blob([buffer]);
       saveAs(blob, `${this.fileName}`);
     });
+
   }
 
   checkForZeros(input: number): number | string {
