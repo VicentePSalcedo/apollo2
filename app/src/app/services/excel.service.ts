@@ -4,8 +4,6 @@ import Excel from 'exceljs';
 import { saveAs } from 'file-saver';
 import { EntriesDataService } from '../services/entries-data.service';
 import { CloudStorageService } from './cloud-storage.service';
-import { User } from 'firebase/auth';
-import { FirebaseAuthService } from './firebase-auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,18 +12,12 @@ export class ExcelService {
 
   private fileName: string = "./Entries" + this.getTodaysDateYYYYMMDD() + ".xlsx";
   private rows: Row[] = [];
-  private user!: User;
 
   constructor(
     private entries: EntriesDataService,
     private cloudStorage: CloudStorageService,
-    private userAuth: FirebaseAuthService,
   )
   {
-
-    this.userAuth.user$.subscribe((data: User) => {
-      this.user = data;
-    });
     this.entries.entriesDisplayed.subscribe((entries: Entry[]) => {
       this.rows = [];
       entries.forEach(entry => {
@@ -62,10 +54,8 @@ export class ExcelService {
   }
 
   getFileNameFromUrl(fileUrl: string): string {
-    if(this.user){
-      return fileUrl.replace(this.user.uid + "/", "");
-    }
-    return 'none'
+    const regex = /^.*\//;
+    return fileUrl.replace(regex, '');
   }
 
   exportToExcel() {
