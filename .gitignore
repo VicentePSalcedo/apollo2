@@ -1,6 +1,7 @@
-# Logs
 google-cloud*
+package*
 
+# Logs
 logs
 *.log
 npm-debug.log*
