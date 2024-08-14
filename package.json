@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "@angular/cli": "^18.1.2",
-    "@angular/language-server": "^18.1.2",
-    "firebase": "^10.12.4",
-    "firebase-tools": "^13.14.2"
-  }
-}
