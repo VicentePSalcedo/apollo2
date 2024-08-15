@@ -10,7 +10,7 @@ import { CloudStorageService } from './cloud-storage.service';
 })
 export class ExcelService {
 
-  private fileName: string = "./Entries" + this.getTodaysDateYYYYMMDD() + ".xlsx";
+  private fileName: string = "Entries" + this.getTodaysDateYYYYMMDD() + ".xlsx";
   private rows: Row[] = [];
 
   constructor(
@@ -20,40 +20,123 @@ export class ExcelService {
   {
     this.entries.entriesDisplayed.subscribe((entries: Entry[]) => {
       this.rows = [];
+
       entries.forEach(entry => {
-        let imagesUrls: string[] = [];
-        let imagesText: string[] = [];
-        if(entry.image){
-          for(let i = 0; i < entry.image.length; i++){
-            this.cloudStorage.getFileUrl(entry.image[i]).then(url => {
-              imagesUrls.push(url);
-            });
-            imagesText.push(this.getFileNameFromUrl(entry.image[i]));
-          }
+        let image0Url: string[] = [];
+        let image0Text: string = ' ';
+        let image1Url: string[] = [];
+        let image1Text: string = ' ';
+        let image2Url: string[] = [];
+        let image2Text: string = ' ';
+        let image3Url: string[] = [];
+        let image3Text: string = ' ';
+        let image4Url: string[] = [];
+        let image4Text: string = ' ';
+        let image5Url: string[] = [];
+        let image5Text: string = ' ';
+        let image6Url: string[] = [];
+        let image6Text: string = ' ';
+        let image7Url: string[] = [];
+        let image7Text: string = ' ';
+        let image8Url: string[] = [];
+        let image8Text: string = ' ';
+        let image9Url: string[] = [];
+        let image9Text: string = ' ';
+
+        if(entry.image[0]){
+          this.cloudStorage.getFileUrl(entry.image[0]).then(url => {
+            image0Url.push(url);
+          });
+          image0Text = this.getFileNameFromUrl(entry.image[0]);
         }
-        let newRow = {
-          date: entry.date,
-          lotNo: entry.lotNo,
-          address: entry.address,
-          boards: this.checkForZeros(entry.boards),
-          smoothB1: this.checkForZeros(entry.smoothB1),
-          smoothB2: this.checkForZeros(entry.smoothB2),
-          smoothHoQa: this.checkForZeros(entry.smoothHoQa),
-          textureB1: this.checkForZeros(entry.textureB1),
-          textureB2: this.checkForZeros(entry.textureB2),
-          textureHoQa: this.checkForZeros(entry.textureHoQa),
-          repairsOrWarranty: this.checkForZeros(entry.repairsOrWarranty),
-          images: {
-            text: imagesText,
-            hyperlink: imagesUrls
-          }
+        if(entry.image[1]){
+          this.cloudStorage.getFileUrl(entry.image[1]).then(url => {
+            image1Url.push(url);
+          });
+          image1Text = this.getFileNameFromUrl(entry.image[1]);
         }
+        if(entry.image[2]){
+          this.cloudStorage.getFileUrl(entry.image[2]).then(url => {
+            image2Url.push(url);
+          });
+          image2Text = this.getFileNameFromUrl(entry.image[2]);
+        }
+        if(entry.image[3]){
+          this.cloudStorage.getFileUrl(entry.image[3]).then(url => {
+            image3Url.push(url);
+          });
+          image3Text = this.getFileNameFromUrl(entry.image[3]);
+        }
+        if(entry.image[4]){
+          this.cloudStorage.getFileUrl(entry.image[4]).then(url => {
+            image4Url.push(url);
+          });
+          image4Text = this.getFileNameFromUrl(entry.image[4]);
+        }
+        if(entry.image[5]){
+          this.cloudStorage.getFileUrl(entry.image[5]).then(url => {
+            image5Url.push(url);
+          });
+          image5Text = this.getFileNameFromUrl(entry.image[5]);
+        }
+        if(entry.image[6]){
+          this.cloudStorage.getFileUrl(entry.image[6]).then(url => {
+            image6Url.push(url);
+          });
+          image6Text = this.getFileNameFromUrl(entry.image[6]);
+        }
+        if(entry.image[7]){
+          this.cloudStorage.getFileUrl(entry.image[7]).then(url => {
+            image7Url.push(url);
+          });
+          image7Text = this.getFileNameFromUrl(entry.image[7]);
+        }
+        if(entry.image[8]){
+          this.cloudStorage.getFileUrl(entry.image[8]).then(url => {
+            image8Url.push(url);
+          });
+          image8Text = this.getFileNameFromUrl(entry.image[8]);
+        }
+        if(entry.image[9]){
+          this.cloudStorage.getFileUrl(entry.image[9]).then(url => {
+            image9Url.push(url);
+          });
+          image9Text = this.getFileNameFromUrl(entry.image[9]);
+        }
+
+        let newRow = [
+          entry.date,
+          entry.lotNo,
+          entry.address,
+          this.checkForZeros(entry.boards),
+          this.checkForZeros(entry.smoothB1),
+          this.checkForZeros(entry.smoothB2),
+          this.checkForZeros(entry.smoothHoQa),
+          this.checkForZeros(entry.textureB1),
+          this.checkForZeros(entry.textureB2),
+          this.checkForZeros(entry.textureHoQa),
+          this.checkForZeros(entry.repairsOrWarranty),
+          entry.observations,
+          { text: image0Text, hyperlink: image0Url, },
+          { text: image1Text, hyperlink: image1Url, },
+          { text: image2Text, hyperlink: image2Url, },
+          { text: image3Text, hyperlink: image3Url, },
+          { text: image4Text, hyperlink: image4Url, },
+          { text: image5Text, hyperlink: image5Url, },
+          { text: image6Text, hyperlink: image6Url, },
+          { text: image7Text, hyperlink: image7Url, },
+          { text: image8Text, hyperlink: image8Url, },
+          { text: image9Text, hyperlink: image9Url, },
+        ];
+
+        console.log(image0Url);
         this.rows.push(newRow);
       });
     });
   }
 
   getFileNameFromUrl(fileUrl: string): string {
+    if(!fileUrl) return '';
     const regex = /^.*\//;
     return fileUrl.replace(regex, '');
   }
