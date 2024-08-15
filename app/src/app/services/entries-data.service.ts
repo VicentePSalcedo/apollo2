@@ -25,8 +25,25 @@ export class EntriesDataService {
     this.firestore.entries$.pipe().subscribe((value: Entry[]) => {
       let sortedValue = this.sortByTimeStamp(value);
       this.entriesData = sortedValue;
-      this.entriesDisplayed.next(this.entriesData.slice(-50));
+      this.entriesDisplayed.next(this.filterObjectsByCurrentWeek(this.entriesData));
       this.calculateTotals();
+    });
+  }
+  filterObjectsByCurrentWeek(data: Entry[]): Entry[] {
+    const now = new Date();
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay() + 1); // Adjust to Monday
+    startOfWeek.setHours(0, 0, 0, 0);
+    console.log(startOfWeek);
+
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(endOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
+    console.log(endOfWeek);
+
+    return data.filter(entry => {
+      const timestampDate = new Date(entry.timeStamp);
+      return timestampDate >= startOfWeek && timestampDate <= endOfWeek;
     });
   }
 
