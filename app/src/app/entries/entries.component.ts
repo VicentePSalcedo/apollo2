@@ -47,12 +47,12 @@ export class EntriesComponent implements OnInit, OnDestroy {
     // ------
     // This is in the constructor instead of ngOnInit to ensure it is populated
     // on routing to differnt pages withing the app
-    // this.entriesDisplayed = this.EntriesDataService.getEntries();
+    this.entriesDisplayed = this.EntriesDataService.entriesDisplayed.getValue();
     // ------
   }
 
   deleteEntry(input: string){
-    this.firestore.delectEntry(input);
+    this.firestore.deletEntry(input);
   }
 
   openFile(input: string){

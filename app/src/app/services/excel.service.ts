@@ -106,8 +106,7 @@ export class ExcelService {
 
         let newRow = [
           entry.date,
-          entry.lotNo,
-          entry.address,
+          entry.lotNo + " " + entry.address,
           this.checkForZeros(entry.boards),
           this.checkForZeros(entry.smoothB1),
           this.checkForZeros(entry.smoothB2),
@@ -128,8 +127,6 @@ export class ExcelService {
           { text: image8Text, hyperlink: image8Url, },
           { text: image9Text, hyperlink: image9Url, },
         ];
-
-        console.log(image0Url);
         this.rows.push(newRow);
       });
     });
@@ -142,14 +139,12 @@ export class ExcelService {
   }
 
   exportToExcel() {
-
     let workbook = new Excel.Workbook();
     let worksheet = workbook.addWorksheet('WEEK');
 
     const headers = [
       { key: 'date', header: 'DATE' },
-      { key: 'lotNo', header: 'LOT No' },
-      { key: 'address', header: 'ADDRESS' },
+      { key: 'lotNo', header: 'Lot No & Address' },
       { key: 'boards', header: 'BOARDS' },
       { key: 'smoothB1', header: 'Smooth B1' },
       { key: 'smoothB2', header: 'Smooth B2' },

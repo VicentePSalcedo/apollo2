@@ -22,6 +22,7 @@ import {
 export class ExportEntriesComponent {
 
   dateRanges: FormGroup;
+  lotAndAddress: FormGroup;
 
   constructor(
     private fb: FormBuilder,
@@ -32,12 +33,24 @@ export class ExportEntriesComponent {
       startDate: [Validators.required],
       endDate: [Validators.required]
     });
+    this.lotAndAddress = this.fb.group({
+      lotNo: [Validators.required],
+      address: ['', Validators.required],
+    });
   }
 
-  onSubmit(){
+  reset(){
+    this.entries.filterObjectsByCurrentWeek();
+  }
+
+  filterByDate(){
     let startDate = new Date(this.dateRanges.value.startDate);
     let endDate = new Date(this.dateRanges.value.endDate);
     this.entries.filterDisplayedEntriesByDateRange(startDate, endDate);
+  }
+
+  filterByLotAndAddress(){
+    this.entries.filterLotsByLotNoAndAddress(this.lotAndAddress.value.lotNo, this.lotAndAddress.value.address)
   }
 
   exportToExcel(){

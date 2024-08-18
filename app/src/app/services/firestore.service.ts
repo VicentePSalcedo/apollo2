@@ -39,7 +39,7 @@ export class FirestoreService {
     });
   }
 
-  delectEntry(input: string){
+  deletEntry(input: string){
     const docRef = doc(this.firestore, this.entriesPath, input)
     deleteDoc(docRef);
   }
@@ -47,7 +47,7 @@ export class FirestoreService {
   addEntry(date: string, lotNo: number, address: string, boards: number,
     smoothB1: number, smoothB2: number, smoothHoQa: number, textureB1: number,
     textureB2: number, textureHoQa: number, repairsOrWarranty: number,
-    observations: string, image: string[]
+    observations: string, image: string[], workers: string
   ){
     let id = objectHash(date + lotNo.toString() + address + boards.toString() +
       smoothB1.toString() + smoothB2.toString() + textureB1.toString() +
@@ -71,7 +71,8 @@ export class FirestoreService {
         textureHoQa: textureHoQa,
         repairsOrWarranty: repairsOrWarranty,
         observations: observations,
-        image: image
+        image: image,
+        workers: workers
       }
       setDoc(docRef, docData);
     }

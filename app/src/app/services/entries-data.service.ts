@@ -25,26 +25,52 @@ export class EntriesDataService {
     this.firestore.entries$.pipe().subscribe((value: Entry[]) => {
       let sortedValue = this.sortByTimeStamp(value);
       this.entriesData = sortedValue;
-      this.entriesDisplayed.next(this.filterObjectsByCurrentWeek(this.entriesData));
+      this.filterObjectsByCurrentWeek();
       this.calculateTotals();
     });
   }
-  filterObjectsByCurrentWeek(data: Entry[]): Entry[] {
+
+  getMostRecentBoardCount(lotNo: number, address: string): number | undefined {
+    if(!this.entriesData) return;
+    const foundObject = this.entriesData.find(entry => entry.lotNo === lotNo && entry.address === address);
+    return foundObject?.boards;
+  }
+
+  filterObjectsByCurrentWeek(){
+    if(!this.entriesData) return;
     const now = new Date();
     const startOfWeek = new Date(now);
     startOfWeek.setDate(now.getDate() - now.getDay() + 1); // Adjust to Monday
     startOfWeek.setHours(0, 0, 0, 0);
-    console.log(startOfWeek);
 
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(endOfWeek.getDate() + 6);
     endOfWeek.setHours(23, 59, 59, 999);
-    console.log(endOfWeek);
 
-    return data.filter(entry => {
+    this.entriesDisplayed.next(this.entriesData.filter(entry => {
       const timestampDate = new Date(entry.timeStamp);
       return timestampDate >= startOfWeek && timestampDate <= endOfWeek;
-    });
+    }));
+    this.calculateTotals();
+  }
+
+  filterLotsByLotNoAndAddress(lotNo: number, address: string){
+    if(!this.entriesData) return;
+    this.entriesDisplayed.next(this.entriesData.filter(entries => entries.lotNo === lotNo && entries.address === address));
+    this.calculateTotals();
+  }
+
+  filterDisplayedEntriesByDateRange(startDate: Date, endDate: Date)  {
+    if(!this.entriesData) return;
+    this.entriesDisplayed.next(this.entriesData.filter(item => {
+      const itemDate = new Date(item.date); // Ensure item.date is a Date object
+      return itemDate >= startDate && itemDate <= endDate;
+    }));
+    this.calculateTotals();
+  }
+
+  sortByTimeStamp(data: Entry[]): Entry[] {
+    return data.sort((b, a) => b.timeStamp - a.timeStamp);
   }
 
   calculateTotals() {
@@ -75,19 +101,6 @@ export class EntriesDataService {
     this.textureHoQa.next(textureB2HoQa);
     this.repairsOrWarranty.next(repairsOrWarranty);
     this.grandTotal.next(grandTotal);
-  }
-
-  filterDisplayedEntriesByDateRange(startDate: Date, endDate: Date)  {
-    if(!this.entriesData) return;
-    this.entriesDisplayed.next(this.entriesData.filter(item => {
-      const itemDate = new Date(item.date); // Ensure item.date is a Date object
-      return itemDate >= startDate && itemDate <= endDate;
-    }));
-    this.calculateTotals();
-  }
-
-  sortByTimeStamp(data: Entry[]): Entry[] {
-    return data.sort((b, a) => b.timeStamp - a.timeStamp);
   }
 
 }

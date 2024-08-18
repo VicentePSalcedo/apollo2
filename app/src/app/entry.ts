@@ -14,4 +14,5 @@ export interface Entry {
   repairsOrWarranty: number;
   observations: string;
   image: string[];
+  workers: string;
 }

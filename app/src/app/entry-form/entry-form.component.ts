@@ -11,6 +11,7 @@ import { FirebaseAuthService } from '../services/firebase-auth.service';
 import { FirestoreService } from '../services/firestore.service';
 import { EntriesComponent } from '../entries/entries.component';
 import { CloudStorageService } from '../services/cloud-storage.service';
+import { EntriesDataService } from '../services/entries-data.service';
 
 @Component({
   selector: 'app-entry-form',
@@ -35,6 +36,7 @@ export class EntryFormComponent implements OnInit, OnDestroy {
     private userAuth: FirebaseAuthService,
     private firestore: FirestoreService,
     private cloadStorage: CloudStorageService,
+    private entries: EntriesDataService
   ){
     this.entry = this.fb.group({
       date: [Validators.required],
@@ -44,7 +46,13 @@ export class EntryFormComponent implements OnInit, OnDestroy {
       boardType: [Validators.required],
       observations: [],
       image: [],
+      workers: [],
     });
+  }
+
+  getLastCount(){
+    this.entry.value.boards = this.entries.getMostRecentBoardCount(this.entry.value.lotNo, this.entry.value.address);
+    console.log(this.entries.getMostRecentBoardCount(this.entry.value.lotNo, this.entry.value.address));
   }
 
   clearImageSelection(){
@@ -61,7 +69,6 @@ export class EntryFormComponent implements OnInit, OnDestroy {
     let textureHoQa: number = 0;
     let repairsOrWarranty: number = 0;
     let image: string[] = [];
-
     if (this.entry.value.boardType == 'B1 Liso') {
       smoothB1 = this.entry.value.boards * 1.25;
     } else if (this.entry.value.boardType == 'B2 Liso') {
@@ -88,14 +95,12 @@ export class EntryFormComponent implements OnInit, OnDestroy {
           image.push(this.user.uid + "/" + file.name);
         }
       }
-    } else {
-      image.push('none');
     }
 
     this.firestore.addEntry(
       this.entry.value.date,
       this.entry.value.lotNo,
-      this.entry.value.address,
+      this.entry.value.address.trim(),
       this.entry.value.boards,
       smoothB1,
       smoothB2,
@@ -105,7 +110,8 @@ export class EntryFormComponent implements OnInit, OnDestroy {
       textureHoQa,
       repairsOrWarranty,
       this.entry.value.observations,
-      image
+      image,
+      this.entry.value.workers
     );
 
     this.cloadStorage.uploadFile(input);

@@ -1,23 +1,23 @@
 <form [formGroup]="entry" (ngSubmit)="onSubmit(upload)">
   <ul>
     <li>
-      <label for="date">DATE: </label>
+      <label for="date">Date: </label>
       <input type="date" formControlName="date"/>
     </li>
     <li>
-      <label for="lotNo">LOT NO: </label>
-      <input type="number" formControlName="lotNo"/>
+      <label for="lotNo">Lot No: </label>
+      <input type="number" formControlName="lotNo" (change)=getLastCount()/>
     </li>
     <li>
-      <label for="address">ADDRESS: </label>
-      <input type="text" formControlName="address"/>
+      <label for="address">Address: </label>
+      <input type="text" formControlName="address" (change)=getLastCount()/>
     </li>
     <li>
-      <label for="boards">BOARDS: </label>
-      <input type="number" formControlName="boards"/>
+      <label for="boards">Boards: </label>
+      <input type="number" formControlName="boards" [value]=this.entry.value.boards/>
     </li>
     <li>
-      <label for="boardType">WORK TYPE: </label>
+      <label for="boardType">Work Type: </label>
       <select formControlName = "boardType">
         <option value="B1 Liso">B1 Smooth</option>
         <option value="B2 Liso">B2 Smooth</option>
@@ -29,12 +29,16 @@
       </select>
     </li>
     <li>
-      <label for="observations">OBSERVATIONS: </label>
+      <label for="observations">Observations: </label>
       <input type="text" formControlName="observations"/>
     </li>
     <li>
-      <label for="image">IMGS: </label>
+      <label for="image">Images: </label>
       <input id="image" type="file" multiple="multiple" formControlName="image" #upload/>
+    </li>
+    <li>
+      <label for="workers">Worker: </label>
+      <input type="text" formControlName="workers"/>
     </li>
   </ul>
 </form>
