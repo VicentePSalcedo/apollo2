@@ -25,26 +25,54 @@ export class EntriesDataService {
     this.firestore.entries$.pipe().subscribe((value: Entry[]) => {
       let sortedValue = this.sortByTimeStamp(value);
       this.entriesData = sortedValue;
-      this.entriesDisplayed.next(this.filterObjectsByCurrentWeek(this.entriesData));
-      this.calculateTotals();
+      this.filterObjectsByCurrentWeek();
     });
   }
-  filterObjectsByCurrentWeek(data: Entry[]): Entry[] {
+
+  filterObjectsByCurrentWeek(){
+    if(!this.entriesData) return;
+
     const now = new Date();
-    const startOfWeek = new Date(now);
-    startOfWeek.setDate(now.getDate() - now.getDay() + 1); // Adjust to Monday
-    startOfWeek.setHours(0, 0, 0, 0);
-    console.log(startOfWeek);
+    const dayOfWeek = now.getDay();
+    let previousMonday: Date;
+    let nextSunday: Date;
 
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(endOfWeek.getDate() + 6);
-    endOfWeek.setHours(23, 59, 59, 999);
-    console.log(endOfWeek);
+    if(dayOfWeek === 1){
+      previousMonday = now;
+      previousMonday.setHours(0, 0, 0, 0)
+    } else {
+      const daysToSubtract = (dayOfWeek === 0) ? 6 : dayOfWeek - 1;
+      previousMonday = new Date(now.getTime() - daysToSubtract * 24 * 60 * 60 * 1000);
+      previousMonday.setHours(0, 0, 0, 0);
+    }
 
-    return data.filter(entry => {
+    if (dayOfWeek === 0) {
+        nextSunday = now;
+        nextSunday.setHours(23, 59, 59, 999);
+    } else {
+        const daysToAdd = 7 - dayOfWeek;
+        nextSunday = new Date(now.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
+        nextSunday.setHours(23, 59, 59, 999);
+    }
+
+    this.entriesDisplayed.next(this.entriesData.filter(entry => {
       const timestampDate = new Date(entry.timeStamp);
-      return timestampDate >= startOfWeek && timestampDate <= endOfWeek;
-    });
+      return timestampDate >= previousMonday && timestampDate <= nextSunday;
+    }));
+    this.calculateTotals();
+  }
+
+  filterDisplayedEntriesByDateRange(startDate: Date, endDate: Date)  {
+    if(!this.entriesData) return;
+    this.entriesDisplayed.next(this.entriesData.filter(item => {
+      const itemDate = new Date(item.date); // Ensure item.date is a Date object
+      return itemDate >= startDate && itemDate <= endDate;
+    }));
+    this.calculateTotals();
+  }
+
+  sortByTimeStamp(data: Entry[]): Entry[] {
+    return data.sort((b, a) => b.timeStamp - a.timeStamp);
   }
 
   calculateTotals() {
@@ -76,18 +104,4 @@ export class EntriesDataService {
     this.repairsOrWarranty.next(repairsOrWarranty);
     this.grandTotal.next(grandTotal);
   }
-
-  filterDisplayedEntriesByDateRange(startDate: Date, endDate: Date)  {
-    if(!this.entriesData) return;
-    this.entriesDisplayed.next(this.entriesData.filter(item => {
-      const itemDate = new Date(item.date); // Ensure item.date is a Date object
-      return itemDate >= startDate && itemDate <= endDate;
-    }));
-    this.calculateTotals();
-  }
-
-  sortByTimeStamp(data: Entry[]): Entry[] {
-    return data.sort((b, a) => b.timeStamp - a.timeStamp);
-  }
-
 }

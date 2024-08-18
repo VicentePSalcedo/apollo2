@@ -95,7 +95,7 @@ export class EntryFormComponent implements OnInit, OnDestroy {
     this.firestore.addEntry(
       this.entry.value.date,
       this.entry.value.lotNo,
-      this.entry.value.address,
+      this.entry.value.address.trim(),
       this.entry.value.boards,
       smoothB1,
       smoothB2,
