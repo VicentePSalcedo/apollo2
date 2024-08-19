@@ -24,12 +24,11 @@ import { EntriesDataService } from '../services/entries-data.service';
   ]
 })
 export class EntryFormComponent implements OnInit, OnDestroy {
-  @ViewChild(EntriesComponent) child?: EntriesComponent;
-
   private _userSubscription$!: Subscription;
 
   entry: FormGroup;
   user!: User | null;
+  lastBoardCount: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -42,7 +41,7 @@ export class EntryFormComponent implements OnInit, OnDestroy {
       date: [Validators.required],
       lotNo: [Validators.required],
       address: ['', Validators.required],
-      boards: [0, Validators.required],
+      boards: [Validators.required],
       boardType: [Validators.required],
       observations: [],
       image: [],
@@ -51,8 +50,7 @@ export class EntryFormComponent implements OnInit, OnDestroy {
   }
 
   getLastCount(){
-    this.entry.value.boards = this.entries.getMostRecentBoardCount(this.entry.value.lotNo, this.entry.value.address);
-    console.log(this.entries.getMostRecentBoardCount(this.entry.value.lotNo, this.entry.value.address));
+    this.lastBoardCount = this.entries.getMostRecentBoardCount(this.entry.value.lotNo, this.entry.value.address);
   }
 
   clearImageSelection(){

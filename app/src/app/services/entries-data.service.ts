@@ -26,13 +26,12 @@ export class EntriesDataService {
       let sortedValue = this.sortByTimeStamp(value);
       this.entriesData = sortedValue;
       this.filterObjectsByCurrentWeek();
-      this.calculateTotals();
     });
   }
 
   getMostRecentBoardCount(lotNo: number, address: string): number {
     if(!this.entriesData) return 0;
-    const foundObject = this.entriesData.find(entry => entry.lotNo === lotNo && entry.address === address);
+    const foundObject = this.entriesData.reverse().find(entry => entry.lotNo === lotNo && entry.address === address);
     if(!foundObject) return 0;
     return foundObject.boards;
   }

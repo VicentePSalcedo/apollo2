@@ -15,11 +15,11 @@
     <li>
       <label for="boards">Boards: </label>
       <input type="number" formControlName="boards"
-        [value]=this.entry.value.boards/>
+        [value]=this.lastBoardCount/>
     </li>
     <li>
       <label for="boardType">Work Type: </label>
-      <select formControlName = "boardType" (input)=getLastCount()>
+      <select formControlName = "boardType">
         <option value="B1 Liso">B1 Smooth</option>
         <option value="B2 Liso">B2 Smooth</option>
         <option value="HO/QA smo">HQ/QA Smooth</option>
