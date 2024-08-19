@@ -30,10 +30,11 @@ export class EntriesDataService {
     });
   }
 
-  getMostRecentBoardCount(lotNo: number, address: string): number | undefined {
-    if(!this.entriesData) return;
+  getMostRecentBoardCount(lotNo: number, address: string): number {
+    if(!this.entriesData) return 0;
     const foundObject = this.entriesData.find(entry => entry.lotNo === lotNo && entry.address === address);
-    return foundObject?.boards;
+    if(!foundObject) return 0;
+    return foundObject.boards;
   }
 
   filterObjectsByCurrentWeek(){

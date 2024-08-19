@@ -6,19 +6,20 @@
     </li>
     <li>
       <label for="lotNo">Lot No: </label>
-      <input type="number" formControlName="lotNo" (change)=getLastCount()/>
+      <input type="number" formControlName="lotNo" (input)=getLastCount()/>
     </li>
     <li>
       <label for="address">Address: </label>
-      <input type="text" formControlName="address" (change)=getLastCount()/>
+      <input type="text" formControlName="address" (input)=getLastCount()/>
     </li>
     <li>
       <label for="boards">Boards: </label>
-      <input type="number" formControlName="boards" [value]=this.entry.value.boards/>
+      <input type="number" formControlName="boards"
+        [value]=this.entry.value.boards/>
     </li>
     <li>
       <label for="boardType">Work Type: </label>
-      <select formControlName = "boardType">
+      <select formControlName = "boardType" (input)=getLastCount()>
         <option value="B1 Liso">B1 Smooth</option>
         <option value="B2 Liso">B2 Smooth</option>
         <option value="HO/QA smo">HQ/QA Smooth</option>
@@ -34,7 +35,8 @@
     </li>
     <li>
       <label for="image">Images: </label>
-      <input id="image" type="file" multiple="multiple" formControlName="image" #upload/>
+      <input id="image" type="file" multiple="multiple" formControlName="image"
+        #upload/>
     </li>
     <li>
       <label for="workers">Worker: </label>
