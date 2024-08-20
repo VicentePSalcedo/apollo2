@@ -105,6 +105,7 @@ export class ExcelService {
         }
 
         let newRow = [
+          '',
           entry.date,
           entry.lotNo + " " + entry.address,
           this.checkForZeros(entry.boards),
@@ -142,39 +143,102 @@ export class ExcelService {
     let workbook = new Excel.Workbook();
     let worksheet = workbook.addWorksheet('WEEK');
 
-    const headers = [
-      { key: 'date', header: 'DATE' },
-      { key: 'lotNo', header: 'Lot No & Address' },
-      { key: 'boards', header: 'BOARDS' },
-      { key: 'smoothB1', header: 'Smooth B1' },
-      { key: 'smoothB2', header: 'Smooth B2' },
-      { key: 'smoothHoQa', header: 'Smooth HO/QA' },
-      { key: 'textureB1', header: 'Texture B1' },
-      { key: 'textureB2', header: 'Texture B2' },
-      { key: 'textureHoQa', header: 'Texture HO/QA' },
-      { key: 'repairsOrWarranty', header: 'REPAIRS/WARRANTY'},
-      { key: 'observations', header: 'OBSERVATIONS' },
-      { key: 'images' , header: 'Images'}
-    ];
+    worksheet.addRow(['', 'CORNESTONE DRYWALL']);
+    worksheet.mergeCells(1, 2, 1, 13);
+    worksheet.getCell(1, 2).alignment = { horizontal: 'center', vertical: 'middle' };
+    worksheet.getCell(1, 2).font = { bold: true, size: 18, name: 'Calibri' };
+    worksheet.getCell(1, 2).fill = { type: 'pattern', pattern: 'lightGray' };
 
-    worksheet.columns = headers;
+    worksheet.addRow(['', 'SUB CONTRACTOR:', '', 'MORONTA BROTHER SERVICES LLC'])
+    worksheet.mergeCells(2, 2, 2, 3);
+    worksheet.getCell(2, 2).alignment = { horizontal: 'right' };
+    worksheet.getCell(2, 2).font = { bold: true, size: 11, name: 'Calibri' };
+    worksheet.getCell(2, 2).fill = { type: 'pattern', pattern: 'lightGray' };
+    worksheet.mergeCells(2, 4, 2, 13);
+    worksheet.getCell(2, 5).alignment = { horizontal: 'center', vertical: 'middle' };
+    worksheet.getCell(2, 5).font = { bold: true, size: 11, name: 'Calibri'  };
+    worksheet.getCell(2, 5).fill = { type: 'pattern', pattern: 'lightGray' };
+
+    worksheet.addRow({});
+    worksheet.mergeCells(3, 2, 3, 13);
+
+    worksheet.addRow([ '', 'DATE', 'LOT Nº & ADDRESS', 'BOARDS', 'SMOOTH', '', '',
+      'TEXTURE', '', '', 'REPAIRS/WARRANTY', 'OBSERVATIONS', 'IMAGES' ]);
+    worksheet.addRow([ '', '', '', '', 'B1', 'B2', 'HO/QA', 'B1', 'B2', 'HO/QA' ]);
+    worksheet.mergeCells('B4:B5')
+    worksheet.mergeCells('C4:C5')
+    worksheet.mergeCells('D4:D5')
+    worksheet.mergeCells('E4:G4')
+    worksheet.mergeCells('H4:J4')
+    worksheet.mergeCells('K4:K5')
+    worksheet.mergeCells('L4:L5')
+    worksheet.mergeCells('M4:M5')
+
+    worksheet.columns[0].width = 2;
+    worksheet.columns[1].width = 12;
+    worksheet.columns[2].width = 20;
+    worksheet.columns[3].width = 6;
+    worksheet.columns[10].width = 16;
+    worksheet.columns[11].width = 24;
+
+
     this.rows.forEach((row: Row) => {
       worksheet.addRow(row);
     });
 
     worksheet.addRow({})
+    worksheet.addRow([
+      '',
+      '',
+      '',
+      '',
+      this.checkForZeros(this.entries.smoothB1Total.getValue()),
+      this.checkForZeros(this.entries.smoothB2Total.getValue()),
+      this.checkForZeros(this.entries.smoothHoQaTotal.getValue()),
+      this.checkForZeros(this.entries.textureB1Total.getValue()),
+      this.checkForZeros(this.entries.textureB2Total.getValue()),
+      this.checkForZeros(this.entries.textureHoQa.getValue()),
+      this.checkForZeros(this.entries.repairsOrWarranty.getValue()),
+      'Total$: ',
+      this.entries.grandTotal.getValue(),
+    ]);
 
-    worksheet.addRow({
-      smoothB1: this.entries.smoothB1Total.getValue(),
-      smoothB2: this.entries.smoothB2Total.getValue(),
-      smoothHoQa: this.entries.smoothHoQaTotal.getValue(),
-      textureB1: this.entries.textureB1Total.getValue(),
-      textureB2: this.entries.textureB2Total.getValue(),
-      textureHoQa: this.entries.textureHoQa.getValue(),
-      repairsOrWarranty: this.entries.repairsOrWarranty.getValue(),
-      observations: 'Total$: ',
-      images: this.entries.grandTotal.getValue(),
+    worksheet.eachRow({ includeEmpty: false }, (row, rowIndex) => {
+      if(3 < rowIndex && rowIndex <= 5) {
+        row.eachCell({ includeEmpty: false }, (cell, cellIndex) => {
+          if(1 < cellIndex){
+            cell.alignment = { horizontal: 'center', vertical: 'middle', shrinkToFit: true };
+            cell.font = { bold: true, name: 'Calibri'  }
+            cell.fill = { type: 'pattern', pattern: 'lightGray' };
+          }
+        });
+      }
+      if(5 < rowIndex){
+        row.eachCell({ includeEmpty: false }, (cell, cellIndex) => {
+          if(cellIndex == 4 || cellIndex == 12){
+            cell.alignment = { horizontal: 'center', vertical: 'middle' , shrinkToFit: true };
+            cell.font = { bold: true, name: 'Calibri'  };
+          } else if (12 < cellIndex){
+            cell.alignment = { horizontal: 'center', vertical: 'middle' };
+            cell.font = { name: 'Calibri'  };
+          } else {
+            cell.alignment = { horizontal: 'center', vertical: 'middle' , shrinkToFit: true };
+            cell.font = { name: 'Calibri'  };
+          }
+        });
+      }
+      row.eachCell({ includeEmpty: false }, (cell, cellIndex) => {
+        if(1 < cellIndex && cellIndex <= 13){
+          cell.border = {
+            top: { style: 'thin', color: { argb: '000000' } },
+            left: { style: 'thin', color: { argb: '000000' } },
+            bottom: { style: 'thin', color: { argb: '000000' } },
+            right: { style: 'thin', color: { argb: '000000'  } }
+          };
+        }
+      });
     });
+
 
     workbook.xlsx.writeBuffer().then((buffer) => {
       const blob = new Blob([buffer]);
