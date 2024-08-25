@@ -38,14 +38,26 @@ export class EntriesDataService {
 
   filterObjectsByCurrentWeek(){
     if(!this.entriesData) return;
-    const now = new Date();
-    const startOfWeek = new Date(now);
-    startOfWeek.setDate(now.getDate() - now.getDay() + 1); // Adjust to Monday
-    startOfWeek.setHours(0, 0, 0, 0);
+    const today = new Date();
+    const dayOfWeek = today.getDay();
 
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(endOfWeek.getDate() + 6);
-    endOfWeek.setHours(23, 59, 59, 999);
+    let startOfWeek = new Date(today);
+    if (dayOfWeek === 1) {
+        startOfWeek.setHours(0,0,0,0);
+    } else {
+        const daysToSubtract = (dayOfWeek === 0) ? 6 : dayOfWeek - 1;
+        startOfWeek = new Date(today.getTime() - daysToSubtract * 24 * 60 * 60 * 1000);
+        startOfWeek.setHours(0, 0, 0, 0);
+    }
+
+    let endOfWeek = new Date(today);
+    if (dayOfWeek === 0) {
+        endOfWeek.setHours(23, 59, 59, 1000);
+    } else {
+        const daysToAdd = 7 - dayOfWeek;
+        endOfWeek = new Date(today.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
+        endOfWeek.setHours(23, 59, 59, 999);
+    }
 
     this.entriesDisplayed.next(this.entriesData.filter(entry => {
       const timestampDate = new Date(entry.timeStamp);
