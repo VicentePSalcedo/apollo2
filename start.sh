@@ -11,7 +11,7 @@ if [ $? != 0 ]; then
 
     tmux new-window -t $SESH -n "emulators"
     tmux send-keys -t $SESH:emulators "cd app/" C-m
-    tmux send-keys -t $SESH:emulators "firebase emulators:start" C-m
+    tmux send-keys -t $SESH:emulators "firebase emulators:start --import data/ --export-on-exit data/" C-m
 
     tmux select-window -t $SESH:editor
     tmux select-pane -U

@@ -1,5 +1,4 @@
 - make tmux launch script for this project
-1. button to return to top or go to bottom of the page
 2. be able to add to the lot the work type (bump-HO/QA) and the repair/warranty
 to the same entry, so basically separate those fields in the entry form
     - should there be additional field for repair board count?

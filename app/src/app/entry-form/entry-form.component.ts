@@ -49,10 +49,6 @@ export class EntryFormComponent implements OnInit, OnDestroy {
     });
   }
 
-  getLastCount(){
-    this.lastBoardCount = this.entries.getMostRecentBoardCount(this.entry.value.lotNo, this.entry.value.address);
-  }
-
   clearImageSelection(){
     this.entry.reset();
   }
