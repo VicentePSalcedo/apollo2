@@ -29,43 +29,6 @@ export class EntriesDataService {
     });
   }
 
-  getMostRecentBoardCount(lotNo: number, address: string): number {
-    if(!this.entriesData) return 0;
-    const foundObject = this.entriesData.reverse().find(entry => entry.lotNo === lotNo && entry.address === address);
-    if(!foundObject) return 0;
-    return foundObject.boards;
-  }
-
-  filterObjectsByCurrentWeek(){
-    if(!this.entriesData) return;
-    const today = new Date();
-    const dayOfWeek = today.getDay();
-
-    let startOfWeek = new Date(today);
-    if (dayOfWeek === 1) {
-        startOfWeek.setHours(0,0,0,0);
-    } else {
-        const daysToSubtract = (dayOfWeek === 0) ? 6 : dayOfWeek - 1;
-        startOfWeek = new Date(today.getTime() - daysToSubtract * 24 * 60 * 60 * 1000);
-        startOfWeek.setHours(0, 0, 0, 0);
-    }
-
-    let endOfWeek = new Date(today);
-    if (dayOfWeek === 0) {
-        endOfWeek.setHours(23, 59, 59, 1000);
-    } else {
-        const daysToAdd = 7 - dayOfWeek;
-        endOfWeek = new Date(today.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
-        endOfWeek.setHours(23, 59, 59, 999);
-    }
-
-    this.entriesDisplayed.next(this.entriesData.filter(entry => {
-      const timestampDate = new Date(entry.timeStamp);
-      return timestampDate >= startOfWeek && timestampDate <= endOfWeek;
-    }));
-    this.calculateTotals();
-  }
-
   filterLotsByLotNoAndAddress(lotNo: number, address: string){
     if(!this.entriesData) return;
     this.entriesDisplayed.next(this.entriesData.filter(entries => entries.lotNo === lotNo && entries.address === address));
@@ -79,6 +42,13 @@ export class EntriesDataService {
       return itemDate >= startDate && itemDate <= endDate;
     }));
     this.calculateTotals();
+  }
+
+  getMostRecentBoardCount(lotNo: number, address: string): number {
+    if(!this.entriesData) return 0;
+    const foundObject = this.entriesData.reverse().find(entry => entry.lotNo === lotNo && entry.address === address);
+    if(!foundObject) return 0;
+    return foundObject.boards;
   }
 
   sortByTimeStamp(data: Entry[]): Entry[] {
@@ -113,6 +83,36 @@ export class EntriesDataService {
     this.textureHoQa.next(textureB2HoQa);
     this.repairsOrWarranty.next(repairsOrWarranty);
     this.grandTotal.next(grandTotal);
+  }
+
+  filterObjectsByCurrentWeek(){
+    if(!this.entriesData) return;
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+
+    let startOfWeek = new Date(today);
+    if (dayOfWeek === 1) {
+        startOfWeek.setHours(0,0,0,0);
+    } else {
+        const daysToSubtract = (dayOfWeek === 0) ? 6 : dayOfWeek - 1;
+        startOfWeek = new Date(today.getTime() - daysToSubtract * 24 * 60 * 60 * 1000);
+        startOfWeek.setHours(0, 0, 0, 0);
+    }
+
+    let endOfWeek = new Date(today);
+    if (dayOfWeek === 0) {
+        endOfWeek.setHours(23, 59, 59, 1000);
+    } else {
+        const daysToAdd = 7 - dayOfWeek;
+        endOfWeek = new Date(today.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
+        endOfWeek.setHours(23, 59, 59, 999);
+    }
+
+    this.entriesDisplayed.next(this.entriesData.filter(entry => {
+      const timestampDate = new Date(entry.timeStamp);
+      return timestampDate >= startOfWeek && timestampDate <= endOfWeek;
+    }));
+    this.calculateTotals();
   }
 
 }

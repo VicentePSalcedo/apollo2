@@ -1,9 +1,5 @@
-<app-header />
-<br>
-<nav>
-  <ul>
-    <button routerLink="" routerLinkActive="active" ariaCurrentWhenActive="page">Add New Entry</button>
-    <button routerLink="/export" routerLinkActive="active" ariaCurrentWhenActive="page">Export Entries</button>
-  </ul>
-</nav>
-<router-outlet />
+<app-header></app-header>
+<div class="container-fluid">
+  <router-outlet></router-outlet>
+</div>
+<app-footer></app-footer>

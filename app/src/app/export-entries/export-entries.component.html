@@ -1,17 +1,27 @@
 <form [formGroup]="dateRanges" (ngSubmit)="filterByDate()">
-    <label for="startDate">Filter By Date:</label>
-    <input type="date" formControlName="startDate"/>
-    <label for="endDate">-</label>
-    <input type="date" formControlName="endDate"/>
-<button type="submit" [disabled]="!dateRanges.valid">Submit</button>
+
+  <label for="startDate">Filter By Date:</label>
+  <input type="date" formControlName="startDate"/>
+
+  <label for="endDate">-</label>
+  <input type="date" formControlName="endDate"/>
+
+  <button type="submit" [disabled]="!dateRanges.valid">Submit</button>
+
 </form>
+
 <form [formGroup]="lotAndAddress" (ngSubmit)="filterByLotAndAddress()">
-    <label for="lotNo">Filter by Lot No: </label>
-    <input type="number" formControlName="lotNo"/>
-    <label for="address"> and Address: </label>
-    <input type="text" formControlName="address"/>
-<button type="submit" [disabled]="!lotAndAddress.valid">Submit</button>
+
+  <label for="lotNo">Filter by Lot No: </label>
+  <input type="number" formControlName="lotNo"/>
+
+  <label for="address"> and Address: </label>
+  <input type="text" formControlName="address"/>
+
+  <button type="submit" [disabled]="!lotAndAddress.valid">Submit</button>
 </form>
+
 <button (click)=reset()>Clear Filter</button>
 <button (click)=exportToExcel()>Export To XSLX</button>
+
 <app-entries></app-entries>

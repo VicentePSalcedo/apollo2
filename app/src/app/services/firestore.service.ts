@@ -52,7 +52,7 @@ export class FirestoreService {
     let id = objectHash(date + lotNo.toString() + address + boards.toString() +
       smoothB1.toString() + smoothB2.toString() + textureB1.toString() +
       textureB2.toString() + textureHoQa.toString() +
-      repairsOrWarranty.toString() + observations + image
+      repairsOrWarranty.toString() + observations + image + workers
     )
     if(this.entriesPath != ''){
       const docRef = doc(this.firestore, this.entriesPath, id);
