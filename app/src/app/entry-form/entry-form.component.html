@@ -22,7 +22,7 @@
   </div>
 
   <div class="row mb-1">
-    <label for="boardType" class="col-3 col-form-label-sm">WorkType</label>
+    <label for="boardType" class="col-3 col-form-label-sm">Work Type</label>
     <div class="col">
         <select formControlName = "boardType" class="form-select">
           <option value="B1 Liso">B1 Smooth</option>
@@ -44,6 +44,23 @@
   </div>
 
   <div class="row mb-1">
+    <label for="boardType" class="col-3 col-form-label-sm">Repairs/Warranty</label>
+    <div class="col">
+        <select formControlName="repairsOrWarranty" class="form-select">
+          <option value="yes">yes</option>
+          <option value="no">no</option>
+        </select>
+    </div>
+  </div>
+
+  <div class="row mb-1">
+    <label for="boards" class="col-3 col-form-label-sm">Repair/Warranty Boards</label>
+    <div class="col">
+        <input type="number" class="form-control" formControlName="repairBoards"/>
+    </div>
+  </div>
+
+  <div class="row mb-1">
     <label for="observations" class="col-3 col-form-label-sm">Observations</label>
     <div class="col">
         <input type="text" class="form-control" formControlName="observations" />
@@ -55,18 +72,21 @@
     <div class="col">
         <input id="image" type="file" multiple="multiple" formControlName="image" class="form-control" #upload />
     </div>
+    <div (click)=clearImages() class="col">
+      <button>Clear</button>
+    </div>
   </div>
 
   <div class="row mb-1">
-    <label for="workers" class="col-3 col-form-label-sm"> Worker </label>
+    <label for="workers" class="col-3 col-form-label-sm">Worker</label>
     <div class="col">
-        <input type="text" class="form-control" formControlName="workers"/>
+      <input type="text" class="form-control" formControlName="workers"/>
     </div>
   </div>
 
   <div class="d-grid gap-1 d-md-flex justify-content-md-end" role="group">
     <button (click)=onSubmit(upload) [disabled]="!entry.valid" class="btn btn-primary btn-sm me-md-2"> Submit </button>
-    <button (click)=clearImageSelection() class="btn btn-secondary btn-sm"> Clear </button>
+    <button (click)=clear() class="btn btn-secondary btn-sm"> Clear </button>
   </div>
 
 </form>

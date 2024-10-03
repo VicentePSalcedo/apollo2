@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   ReactiveFormsModule,
   Validators,
@@ -11,7 +11,6 @@ import { FirebaseAuthService } from '../services/firebase-auth.service';
 import { FirestoreService } from '../services/firestore.service';
 import { EntriesComponent } from '../entries/entries.component';
 import { CloudStorageService } from '../services/cloud-storage.service';
-import { EntriesDataService } from '../services/entries-data.service';
 
 @Component({
   selector: 'app-entry-form',
@@ -35,21 +34,37 @@ export class EntryFormComponent implements OnInit, OnDestroy {
     private userAuth: FirebaseAuthService,
     private firestore: FirestoreService,
     private cloadStorage: CloudStorageService,
-    private entries: EntriesDataService
   ){
     this.entry = this.fb.group({
       date: [Validators.required],
       lotNo: [Validators.required],
       address: ['', Validators.required],
-      boards: [Validators.required],
       boardType: [Validators.required],
+      boards: [0, Validators.required],
+      repairsOrWarranty: ['no', Validators.required],
+      repairBoards: [0, Validators.required],
       observations: [],
       image: [],
       workers: [],
     });
   }
 
-  clearImageSelection(){
+  clearImages(){
+    this.entry.reset({
+      date: this.entry.value.date,
+      lotNo: this.entry.value.lotNo,
+      address: this.entry.value.address,
+      boardType: this.entry.value.boardType,
+      boards: this.entry.value.boards,
+      repairsOrWarranty: this.entry.value.repairsOrWarranty,
+      repairBoards: this.entry.value.repairBoards,
+      observations: this.entry.value.observations,
+      image: [],
+      workers: this.entry.value.workers,
+    })
+  }
+
+  clear(){
     this.entry.reset();
   }
 
@@ -75,9 +90,10 @@ export class EntryFormComponent implements OnInit, OnDestroy {
       textureB2 = this.entry.value.boards * 0.3;
     } else if (this.entry.value.boardType == 'HO/QA') {
       textureHoQa = this.entry.value.boards * 0.2;
-    } else if (this.entry.value.boardType == 'repairsOrWarranty') {
+    }
+
+    if (this.entry.value.repairsOrWarranty == 'yes') {
       repairsOrWarranty = this.entry.value.boards;
-      this.entry.value.boards = 0;
     }
 
     if(input.files){
