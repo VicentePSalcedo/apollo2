@@ -40,8 +40,8 @@ export class FirestoreService {
     });
   }
 
-  deletEntry(input: string){
-    const docRef = doc(this.firestore, this.entriesPath, input)
+  deletEntry(id: string){
+    const docRef = doc(this.firestore, this.entriesPath, id)
     deleteDoc(docRef);
   }
 

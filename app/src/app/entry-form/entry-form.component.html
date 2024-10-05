@@ -86,9 +86,10 @@
   <div class="d-grid gap-1 d-md-flex justify-content-md-end" role="group">
     @if(this.entry.value.id == ""){
       <button (click)=clear() class="btn btn-secondary btn-sm"> Clear </button>
-    <button (click)=onSubmit(upload) [disabled]="!entry.valid" class="btn btn-primary btn-sm me-md-2">Submit</button>
+      <button (click)=onSubmit(upload) [disabled]="!entry.valid" class="btn btn-primary btn-sm me-md-2">Submit</button>
     } @else {
-      <button (click)=clear() class="btn btn-danger btn-sm"> Clear </button>
+      <button (click)=clear() class="btn btn-secondary btn-sm"> Clear </button>
+      <button (click)=onDelete() class="btn btn-danger btn-sm"> Delete </button>
       <button (click)=onEdit(upload) class="btn btn-primary btn-sm"> Save </button>
     }
   </div>

@@ -82,6 +82,10 @@ export class EntryFormComponent implements OnInit, OnDestroy {
       repairBoards: [0],
     });
   }
+  onDelete(){
+    this.firestore.deletEntry(this.entry.value.id);
+    this.clear();
+  }
 
   onEdit(input: HTMLInputElement){
     if(!this.user) return;
