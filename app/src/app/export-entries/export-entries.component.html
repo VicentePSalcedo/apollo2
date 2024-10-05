@@ -1,27 +1,74 @@
-<form [formGroup]="dateRanges" (ngSubmit)="filterByDate()">
+<form [formGroup]="filter">
+    <div class="d-flex flex-row mr-auto p-1">
+      <label for="startDate" class="d-flex flex-col col-form-label mr-auto p-2">Start Date</label>
+      <div class="d-flex flex-col">
+        <input type="date" class="form-control" formControlName="startDate"/>
+      </div>
+    </div>
 
-  <label for="startDate">Filter By Date:</label>
-  <input type="date" formControlName="startDate"/>
+  <div class="d-flex flex-row mr-auto p-1">
+      <label for="endDate" class="d-flex flex-col col-form-label mr-auto p-2">End Date</label>
+    <div class="d-flex flex-col">
+      <input type="date" class="form-control" formControlName="endDate"/>
+    </div>
+  </div>
 
-  <label for="endDate">-</label>
-  <input type="date" formControlName="endDate"/>
+  <div class="d-flex flex-row mr-auto p-1">
+    <label for="lotNo" class="d-flex flex-col col-form-label mr-auto p-2">Lot No</label>
+    <div class="d-flex flex-col">
+        <input type="number" class="form-control" formControlName="lotNo"/>
+    </div>
+  </div>
 
-  <button type="submit" [disabled]="!dateRanges.valid">Submit</button>
+  <div class="d-flex flex-row mr-auto p-1">
+    <label for="address" class="d-flex flex-col col-form-label mr-auto p-2">Address</label>
+    <div class="d-flex flex-col">
+        <input type="text" class="form-control" formControlName="address"/>
+    </div>
+  </div>
 
+  <div class="container">
+    <div class="form-check form-check-inline">
+      <label class="form-check-label" for="smoothB1">B1 Smooth</label>
+      <input class="form-check-input" type="checkbox" formControlName="smoothB1" value="true">
+    </div>
+    <div class="form-check form-check-inline">
+      <label class="form-check-label" for="smoothB2">B2 Smooth</label>
+      <input class="form-check-input" type="checkbox" formControlName="smoothB2" value="true">
+    </div>
+    <div class="form-check form-check-inline">
+      <label class="form-check-label" for="smoothHoQa">HO/QA Smooth</label>
+      <input class="form-check-input" type="checkbox" formControlName="smoothHoQa" value="true">
+    </div>
+    <div class="form-check form-check-inline">
+      <label class="form-check-label" for="textureB1">B1 Texture</label>
+      <input class="form-check-input" type="checkbox" formControlName="textureB1" value="true">
+    </div>
+    <div class="form-check form-check-inline">
+      <label class="form-check-label" for="textureB2">B2 Texture</label>
+      <input class="form-check-input" type="checkbox" formControlName="textureB2" value="true">
+    </div>
+    <div class="form-check form-check-inline">
+      <label class="form-check-label" for="textureHoQa">HO/Qa Texture</label>
+      <input class="form-check-input" type="checkbox" formControlName="textureHoQa" value="true">
+    </div>
+    <div class="form-check form-check-inline">
+      <label class="form-check-label" for="repairsOrWarranty">Repairs/Warranty</label>
+      <input class="form-check-input" type="checkbox" formControlName="repairsOrWarranty" value="true">
+    </div>
+  </div>
+
+  <div class="d-flex flex-row mr-auto p-1">
+    <label for="worker" class="d-flex flex-col col-form-label mr-auto p-2">Worker</label>
+    <div class="d-flex flex-col">
+        <input type="text" class="form-control" formControlName="worker"/>
+    </div>
+  </div>
+
+  <div class="d-grid gap-1 d-md-flex justify-content-md-end" role="group">
+    <button (click)=reset() class="btn btn-secondary">Reset</button>
+    <button (click)=applyFilter() class="btn btn-secondary">Filter</button>
+    <button (click)=exportToExcel() class="btn btn-primary">Export To XSLX</button>
+  </div>
 </form>
 
-<form [formGroup]="lotAndAddress" (ngSubmit)="filterByLotAndAddress()">
-
-  <label for="lotNo">Filter by Lot No: </label>
-  <input type="number" formControlName="lotNo"/>
-
-  <label for="address"> and Address: </label>
-  <input type="text" formControlName="address"/>
-
-  <button type="submit" [disabled]="!lotAndAddress.valid">Submit</button>
-</form>
-
-<button (click)=reset()>Clear Filter</button>
-<button (click)=exportToExcel()>Export To XSLX</button>
-
-<app-entries></app-entries>

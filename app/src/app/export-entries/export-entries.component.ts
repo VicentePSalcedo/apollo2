@@ -1,10 +1,8 @@
 import { Component } from '@angular/core';
-import { EntriesComponent } from '../entries/entries.component'
 import { EntriesDataService } from '../services/entries-data.service';
 import { ExcelService } from '../services/excel.service';
 import {
   ReactiveFormsModule,
-  Validators,
   FormBuilder,
   FormGroup
 } from '@angular/forms'
@@ -13,7 +11,6 @@ import {
   selector: 'app-export-entries',
   standalone: true,
   imports: [
-    EntriesComponent,
     ReactiveFormsModule
   ],
   templateUrl: './export-entries.component.html',
@@ -21,36 +18,50 @@ import {
 })
 export class ExportEntriesComponent {
 
-  dateRanges: FormGroup;
-  lotAndAddress: FormGroup;
+  filter: FormGroup;
 
   constructor(
     private fb: FormBuilder,
     private entries: EntriesDataService,
     private excel: ExcelService
   ){
-    this.dateRanges = this.fb.group({
-      startDate: [Validators.required],
-      endDate: [Validators.required]
+    this.filter = this.fb.group({
+      startDate: [],
+      endDate: [],
+      lotNo: [],
+      address: [],
+      smoothB1: [],
+      smoothB2: [],
+      smoothHoQa: [],
+      textureB1: [],
+      textureB2: [],
+      textureHoQa: [],
+      repairsOrWarranty: [],
+      worker: [],
     });
-    this.lotAndAddress = this.fb.group({
-      lotNo: [Validators.required],
-      address: ['', Validators.required],
-    });
+  }
+
+  applyFilter(){
+    console.log(this.filter.value);
+    this.entries.filterEntries(
+      this.filter.value.startDate,
+      this.filter.value.endDate,
+      this.filter.value.lotNo,
+      this.filter.value.address,
+      this.filter.value.smoothB1,
+      this.filter.value.smoothB2,
+      this.filter.value.smoothHoQa,
+      this.filter.value.textureB1,
+      this.filter.value.textureB2,
+      this.filter.value.textureHoQa,
+      this.filter.value.repairsOrWarranty,
+      this.filter.value.worker,
+    )
   }
 
   reset(){
     this.entries.filterObjectsByCurrentWeek();
-  }
-
-  filterByDate(){
-    let startDate = new Date(this.dateRanges.value.startDate);
-    let endDate = new Date(this.dateRanges.value.endDate);
-    this.entries.filterDisplayedEntriesByDateRange(startDate, endDate);
-  }
-
-  filterByLotAndAddress(){
-    this.entries.filterLotsByLotNoAndAddress(this.lotAndAddress.value.lotNo, this.lotAndAddress.value.address)
+    this.filter.reset();
   }
 
   exportToExcel(){

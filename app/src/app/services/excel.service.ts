@@ -197,8 +197,8 @@ export class ExcelService {
       this.checkForZeros(this.entries.smoothHoQaTotal.getValue()),
       this.checkForZeros(this.entries.textureB1Total.getValue()),
       this.checkForZeros(this.entries.textureB2Total.getValue()),
-      this.checkForZeros(this.entries.textureHoQa.getValue()),
-      this.checkForZeros(this.entries.repairsOrWarranty.getValue()),
+      this.checkForZeros(this.entries.textureHoQaTotal.getValue()),
+      this.checkForZeros(this.entries.repairsOrWarrantyTotal.getValue()),
       'Total$: ',
       this.entries.grandTotal.getValue(),
     ]);

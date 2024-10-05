@@ -15,8 +15,8 @@ export class EntriesDataService {
   smoothHoQaTotal: BehaviorSubject<number> = new BehaviorSubject(0);
   textureB1Total: BehaviorSubject<number> = new BehaviorSubject(0);
   textureB2Total: BehaviorSubject<number> = new BehaviorSubject(0);
-  textureHoQa: BehaviorSubject<number> = new BehaviorSubject(0);
-  repairsOrWarranty: BehaviorSubject<number> = new BehaviorSubject(0);
+  textureHoQaTotal: BehaviorSubject<number> = new BehaviorSubject(0);
+  repairsOrWarrantyTotal: BehaviorSubject<number> = new BehaviorSubject(0);
   grandTotal: BehaviorSubject<number> = new BehaviorSubject(0);
 
   constructor(
@@ -29,19 +29,42 @@ export class EntriesDataService {
     });
   }
 
-  filterLotsByLotNoAndAddress(lotNo: number, address: string){
+  filterEntries(
+    startDate: Date,
+    endDate: Date,
+    lotNo: number,
+    address: string,
+    smoothB1: string,
+    smoothB2: string,
+    smoothHoQa: string,
+    textureB1: string,
+    textureB2: string,
+    textureHoQa: string,
+    repairsOrWarranty: string,
+    worker: string,
+  )
+  {
     if(!this.entriesData) return;
-    this.entriesDisplayed.next(this.entriesData.filter(entries => entries.lotNo === lotNo && entries.address === address));
-    this.calculateTotals();
-  }
-
-  filterDisplayedEntriesByDateRange(startDate: Date, endDate: Date)  {
-    if(!this.entriesData) return;
-    this.entriesDisplayed.next(this.entriesData.filter(item => {
-      const itemDate = new Date(item.date); // Ensure item.date is a Date object
-      return itemDate >= startDate && itemDate <= endDate;
+    this.entriesDisplayed.next(this.entriesData.filter(entry => {
+      // Check for startDate and endDate
+      console.log(startDate + " " + endDate);
+      if (startDate && endDate){
+        const date = new Date(entry.date);
+        if(date <= startDate || date >= endDate) return false;
+      }
+      if (lotNo && lotNo != entry.lotNo) return false;
+      if (address && address != entry.address) return false;
+      if (smoothB1 && entry.smoothB1 == 0) return false;
+      if (smoothB2 && entry.smoothB2 == 0) return false;
+      if (smoothHoQa && entry.smoothHoQa == 0) return false;
+      if (textureB1 && entry.textureB1 == 0) return false;
+      if (textureB2 && entry.textureB2 == 0) return false;
+      if (textureHoQa && entry.textureHoQa == 0) return false;
+      if (repairsOrWarranty && entry.repairsOrWarranty == 0) return false;
+      if (worker && worker != entry.workers) return false;
+      return true;
     }));
-    this.calculateTotals();
+    this.calculateTotals()
   }
 
   getMostRecentBoardCount(lotNo: number, address: string): number {
@@ -53,6 +76,33 @@ export class EntriesDataService {
 
   sortByTimeStamp(data: Entry[]): Entry[] {
     return data.sort((b, a) => b.timeStamp - a.timeStamp);
+  }
+
+  filterObjectsByCurrentWeek(){
+    if(!this.entriesData) return;
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    let startOfWeek = new Date(today);
+    if (dayOfWeek === 1) {
+        startOfWeek.setHours(0,0,0,0);
+    } else {
+        const daysToSubtract = (dayOfWeek === 0) ? 6 : dayOfWeek - 1;
+        startOfWeek = new Date(today.getTime() - daysToSubtract * 24 * 60 * 60 * 1000);
+        startOfWeek.setHours(0, 0, 0, 0);
+    }
+    let endOfWeek = new Date(today);
+    if (dayOfWeek === 0) {
+        endOfWeek.setHours(23, 59, 59, 1000);
+    } else {
+        const daysToAdd = 7 - dayOfWeek;
+        endOfWeek = new Date(today.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
+        endOfWeek.setHours(23, 59, 59, 999);
+    }
+    this.entriesDisplayed.next(this.entriesData.filter(entry => {
+      const timestampDate = new Date(entry.timeStamp);
+      return timestampDate >= startOfWeek && timestampDate <= endOfWeek;
+    }));
+    this.calculateTotals();
   }
 
   calculateTotals() {
@@ -80,39 +130,9 @@ export class EntriesDataService {
     this.smoothHoQaTotal.next(smoothHoQaTotal);
     this.textureB1Total.next(textureB1Total);
     this.textureB2Total.next(textureB2Total);
-    this.textureHoQa.next(textureB2HoQa);
-    this.repairsOrWarranty.next(repairsOrWarranty);
+    this.textureHoQaTotal.next(textureB2HoQa);
+    this.repairsOrWarrantyTotal.next(repairsOrWarranty);
     this.grandTotal.next(grandTotal);
-  }
-
-  filterObjectsByCurrentWeek(){
-    if(!this.entriesData) return;
-    const today = new Date();
-    const dayOfWeek = today.getDay();
-
-    let startOfWeek = new Date(today);
-    if (dayOfWeek === 1) {
-        startOfWeek.setHours(0,0,0,0);
-    } else {
-        const daysToSubtract = (dayOfWeek === 0) ? 6 : dayOfWeek - 1;
-        startOfWeek = new Date(today.getTime() - daysToSubtract * 24 * 60 * 60 * 1000);
-        startOfWeek.setHours(0, 0, 0, 0);
-    }
-
-    let endOfWeek = new Date(today);
-    if (dayOfWeek === 0) {
-        endOfWeek.setHours(23, 59, 59, 1000);
-    } else {
-        const daysToAdd = 7 - dayOfWeek;
-        endOfWeek = new Date(today.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
-        endOfWeek.setHours(23, 59, 59, 999);
-    }
-
-    this.entriesDisplayed.next(this.entriesData.filter(entry => {
-      const timestampDate = new Date(entry.timeStamp);
-      return timestampDate >= startOfWeek && timestampDate <= endOfWeek;
-    }));
-    this.calculateTotals();
   }
 
 }

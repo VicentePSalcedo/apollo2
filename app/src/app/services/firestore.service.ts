@@ -6,7 +6,8 @@ import {
   CollectionReference,
   doc,
   setDoc,
-  deleteDoc
+  deleteDoc,
+  updateDoc
 } from '@angular/fire/firestore';
 import { FirebaseAuthService } from './firebase-auth.service';
 import { User } from 'firebase/auth';
@@ -44,16 +45,23 @@ export class FirestoreService {
     deleteDoc(docRef);
   }
 
-  addEntry(date: string, lotNo: number, address: string, boards: number,
-    smoothB1: number, smoothB2: number, smoothHoQa: number, textureB1: number,
-    textureB2: number, textureHoQa: number, repairsOrWarranty: number,
-    observations: string, image: string[], workers: string
+  addEntry(
+    date: string,
+    lotNo: number,
+    address: string,
+    boards: number,
+    smoothB1: number,
+    smoothB2: number,
+    smoothHoQa: number,
+    textureB1: number,
+    textureB2: number,
+    textureHoQa: number,
+    repairsOrWarranty: number,
+    observations: string,
+    image: string[],
+    workers: string
   ){
-    let id = objectHash(date + lotNo.toString() + address + boards.toString() +
-      smoothB1.toString() + smoothB2.toString() + textureB1.toString() +
-      textureB2.toString() + textureHoQa.toString() +
-      repairsOrWarranty.toString() + observations + image + workers
-    )
+    let id = objectHash( date + lotNo.toString() + address + boards.toString() + smoothB1.toString() + smoothB2.toString() + textureB1.toString() + textureB2.toString() + textureHoQa.toString() + repairsOrWarranty.toString() + observations + image + workers)
     if(this.entriesPath != ''){
       const docRef = doc(this.firestore, this.entriesPath, id);
       const docData: Entry = {
@@ -77,6 +85,46 @@ export class FirestoreService {
       setDoc(docRef, docData);
     }
 
+  }
+  editEntry(
+    id: string,
+    timeStamp: number,
+    date: string,
+    lotNo: number,
+    address: string,
+    boards: number,
+    smoothB1: number,
+    smoothB2: number,
+    smoothHoQa: number,
+    textureB1: number,
+    textureB2: number,
+    textureHoQa: number,
+    repairsOrWarranty: number,
+    observations: string,
+    image: string[],
+    workers: string
+  ){
+    if(this.entriesPath != ''){
+      const docRef = doc(this.firestore, this.entriesPath, id);
+      updateDoc(docRef, {
+        id: id,
+        timeStamp: timeStamp,
+        date: date,
+        lotNo: lotNo,
+        address: address,
+        boards: boards,
+        smoothB1: smoothB1,
+        smoothB2: smoothB2,
+        smoothHoQa: smoothHoQa,
+        textureB1: textureB1,
+        textureB2: textureB2,
+        textureHoQa: textureHoQa,
+        repairsOrWarranty: repairsOrWarranty,
+        observations: observations,
+        image: image,
+        workers: workers
+      });
+    }
   }
 
 }

@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common'
 
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
+import { EntriesComponent } from'./entries/entries.component';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +14,7 @@ import { FooterComponent } from './footer/footer.component';
     RouterOutlet,
     HeaderComponent,
     FooterComponent,
+    EntriesComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
