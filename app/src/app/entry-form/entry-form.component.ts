@@ -81,6 +81,7 @@ export class EntryFormComponent implements OnInit, OnDestroy {
       repairsOrWarranty: ['no'],
       repairBoards: [0],
     });
+    this.editEntryService.currentEntry.next(this.editEntryService.initialEntry);
   }
   onDelete(){
     this.firestore.deletEntry(this.entry.value.id);

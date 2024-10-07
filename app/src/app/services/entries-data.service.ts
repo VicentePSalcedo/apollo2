@@ -67,13 +67,6 @@ export class EntriesDataService {
     this.calculateTotals()
   }
 
-  getMostRecentBoardCount(lotNo: number, address: string): number {
-    if(!this.entriesData) return 0;
-    const foundObject = this.entriesData.reverse().find(entry => entry.lotNo === lotNo && entry.address === address);
-    if(!foundObject) return 0;
-    return foundObject.boards;
-  }
-
   sortByTimeStamp(data: Entry[]): Entry[] {
     return data.sort((b, a) => b.timeStamp - a.timeStamp);
   }
