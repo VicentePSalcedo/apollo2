@@ -7,7 +7,8 @@ import {
   doc,
   setDoc,
   deleteDoc,
-  updateDoc
+  updateDoc,
+  Timestamp
 } from '@angular/fire/firestore';
 import { FirebaseAuthService } from './firebase-auth.service';
 import { User } from 'firebase/auth';
@@ -62,11 +63,14 @@ export class FirestoreService {
     workers: string
   ){
     let id = objectHash( date + lotNo.toString() + address + boards.toString() + smoothB1.toString() + smoothB2.toString() + textureB1.toString() + textureB2.toString() + textureHoQa.toString() + repairsOrWarranty.toString() + observations + image + workers)
+    let now = new Date();
+    let timeStamp = now.getTime()
+    let ttl = new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
     if(this.entriesPath != ''){
       const docRef = doc(this.firestore, this.entriesPath, id);
       const docData: Entry = {
         id: id,
-        timeStamp: new Date().getTime(),
+        timeStamp: timeStamp,
         date: date,
         lotNo: lotNo,
         address: address,
@@ -80,8 +84,10 @@ export class FirestoreService {
         repairsOrWarranty: repairsOrWarranty,
         observations: observations,
         image: image,
-        workers: workers
+        workers: workers,
+        ttl: Timestamp.fromDate(ttl),
       }
+      console.log(docData.ttl);
       setDoc(docRef, docData);
     }
 

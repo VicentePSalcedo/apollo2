@@ -1,3 +1,5 @@
+import { Timestamp } from "@angular/fire/firestore";
+
 export interface Entry {
   id: string;
   timeStamp: number;
@@ -15,4 +17,5 @@ export interface Entry {
   observations: string;
   image: string[];
   workers: string;
+  ttl: Timestamp;
 }

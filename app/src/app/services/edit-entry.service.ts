@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Entry } from '../entry';
+import { Timestamp } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +24,7 @@ export class EditEntryService {
     observations: "",
     image: [],
     workers: "",
+    ttl: Timestamp.now(),
   };
   currentEntry: BehaviorSubject<Entry> = new BehaviorSubject<Entry>(this.initialEntry);
   constructor() { }
