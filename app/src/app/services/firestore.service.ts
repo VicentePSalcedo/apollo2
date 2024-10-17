@@ -11,6 +11,7 @@ import {
   Timestamp,
   query,
   limit,
+  orderBy,
 } from '@angular/fire/firestore';
 import { FirebaseAuthService } from './firebase-auth.service';
 import { User } from 'firebase/auth';
@@ -36,7 +37,7 @@ export class FirestoreService {
         this.entriesPath = 'Users/' + this.user.uid + '/entries/';
         const userEntries = collection(this.firestore, this.entriesPath);
         this.entriesCollection = userEntries;
-        collectionData(query(userEntries, limit(1000))).subscribe((cData: Entry[]) => {
+        collectionData(query(userEntries, orderBy("timeStamp", "desc"),limit(1000))).subscribe((cData: Entry[]) => {
           this.entries$.next(cData);
           console.log(this.entries$.getValue());
         });
