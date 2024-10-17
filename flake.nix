@@ -21,8 +21,6 @@
             nodejs_20
             nodePackages.pnpm
             nodePackages.typescript
-            nodePackages.typescript-language-server
-            nodePackages.coc-tsserver
             python3
           ];
           shellHook = ''

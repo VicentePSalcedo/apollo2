@@ -8,7 +8,9 @@ import {
   setDoc,
   deleteDoc,
   updateDoc,
-  Timestamp
+  Timestamp,
+  query,
+  limit,
 } from '@angular/fire/firestore';
 import { FirebaseAuthService } from './firebase-auth.service';
 import { User } from 'firebase/auth';
@@ -34,8 +36,9 @@ export class FirestoreService {
         this.entriesPath = 'Users/' + this.user.uid + '/entries/';
         const userEntries = collection(this.firestore, this.entriesPath);
         this.entriesCollection = userEntries;
-        collectionData(userEntries).subscribe((cData: Entry[]) => {
-          this.entries$.next(cData)
+        collectionData(query(userEntries, limit(1000))).subscribe((cData: Entry[]) => {
+          this.entries$.next(cData);
+          console.log(this.entries$.getValue());
         });
       }
     });
