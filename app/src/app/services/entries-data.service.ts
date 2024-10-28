@@ -45,13 +45,13 @@ export class EntriesDataService {
   )
   {
     if(!this.entriesData) return;
+      const formatedStartDate = new Date(startDate).getTime();
+      const formatedEndDate = new Date(endDate).getTime();
     this.entriesDisplayed.next(this.entriesData.filter(entry => {
+      const date = new Date(entry.date).getTime();
       // Check for startDate and endDate
-      console.log(startDate + " " + endDate);
-      if (startDate && endDate){
-        const date = new Date(entry.date);
-        if(date <= startDate || date >= endDate) return false;
-      }
+      if(formatedStartDate && date < formatedStartDate) return false;
+      if(formatedEndDate && date > formatedEndDate) return false;
       if (lotNo && lotNo != entry.lotNo) return false;
       if (address && address != entry.address) return false;
       if (smoothB1 && entry.smoothB1 == 0) return false;
