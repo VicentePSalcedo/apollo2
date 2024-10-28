@@ -37,9 +37,8 @@ export class FirestoreService {
         this.entriesPath = 'Users/' + this.user.uid + '/entries/';
         const userEntries = collection(this.firestore, this.entriesPath);
         this.entriesCollection = userEntries;
-        collectionData(query(userEntries, orderBy("timeStamp", "desc"),limit(1000))).subscribe((cData: Entry[]) => {
-          this.entries$.next(cData);
-          console.log(this.entries$.getValue());
+        collectionData(userEntries).subscribe((cData: Entry[]) => {
+          this.entries$.next(cData)
         });
       }
     });
