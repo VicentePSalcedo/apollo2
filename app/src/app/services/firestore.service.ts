@@ -8,16 +8,11 @@ import {
   setDoc,
   deleteDoc,
   updateDoc,
-  Timestamp,
-  query,
-  limit,
-  orderBy,
 } from '@angular/fire/firestore';
 import { FirebaseAuthService } from './firebase-auth.service';
 import { User } from 'firebase/auth';
 import { BehaviorSubject } from 'rxjs';
 import { Entry } from '../entry';
-import objectHash from 'object-hash';
 
 @Injectable({
   providedIn: 'root'
@@ -49,91 +44,31 @@ export class FirestoreService {
     deleteDoc(docRef);
   }
 
-  addEntry(
-    date: string,
-    lotNo: number,
-    address: string,
-    boards: number,
-    smoothB1: number,
-    smoothB2: number,
-    smoothHoQa: number,
-    textureB1: number,
-    textureB2: number,
-    textureHoQa: number,
-    repairsOrWarranty: number,
-    observations: string,
-    image: string[],
-    workers: string
-  ){
-    let id = objectHash( date + lotNo.toString() + address + boards.toString() + smoothB1.toString() + smoothB2.toString() + textureB1.toString() + textureB2.toString() + textureHoQa.toString() + repairsOrWarranty.toString() + observations + image + workers)
-    let now = new Date();
-    let timeStamp = now.getTime()
-    let ttl = new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
-    if(this.entriesPath != ''){
-      const docRef = doc(this.firestore, this.entriesPath, id);
-      const docData: Entry = {
-        id: id,
-        timeStamp: timeStamp,
-        date: date,
-        lotNo: lotNo,
-        address: address,
-        boards: boards,
-        smoothB1: smoothB1,
-        smoothB2: smoothB2,
-        smoothHoQa: smoothHoQa,
-        textureB1: textureB1,
-        textureB2: textureB2,
-        textureHoQa: textureHoQa,
-        repairsOrWarranty: repairsOrWarranty,
-        observations: observations,
-        image: image,
-        workers: workers,
-        ttl: Timestamp.fromDate(ttl),
-      }
-      console.log(docData.ttl);
-      setDoc(docRef, docData);
-    }
-
+  addEntry(entry: Entry){
+    if(this.entriesPath == '') return;
+    const docRef = doc(this.firestore, this.entriesPath, entry.id);
+    setDoc(docRef, entry);
   }
-  editEntry(
-    id: string,
-    timeStamp: number,
-    date: string,
-    lotNo: number,
-    address: string,
-    boards: number,
-    smoothB1: number,
-    smoothB2: number,
-    smoothHoQa: number,
-    textureB1: number,
-    textureB2: number,
-    textureHoQa: number,
-    repairsOrWarranty: number,
-    observations: string,
-    image: string[],
-    workers: string
-  ){
+
+  editEntry(entry: Entry){
     if(this.entriesPath != ''){
-      const docRef = doc(this.firestore, this.entriesPath, id);
+      const docRef = doc(this.firestore, this.entriesPath, entry.id);
       updateDoc(docRef, {
-        id: id,
-        timeStamp: timeStamp,
-        date: date,
-        lotNo: lotNo,
-        address: address,
-        boards: boards,
-        smoothB1: smoothB1,
-        smoothB2: smoothB2,
-        smoothHoQa: smoothHoQa,
-        textureB1: textureB1,
-        textureB2: textureB2,
-        textureHoQa: textureHoQa,
-        repairsOrWarranty: repairsOrWarranty,
-        observations: observations,
-        image: image,
-        workers: workers
+        date: entry.date,
+        lotNo: entry.lotNo,
+        address: entry.address,
+        boards: entry.boards,
+        smoothB1: entry.smoothB1,
+        smoothB2: entry.smoothB2,
+        smoothHoQa: entry.smoothHoQa,
+        textureB1: entry.textureB1,
+        textureB2: entry.textureB2,
+        textureHoQa: entry.textureHoQa,
+        repairsOrWarranty: entry.repairsOrWarranty,
+        observations: entry.observations,
+        image: entry.image,
+        workers: entry.workers
       });
     }
   }
-
 }

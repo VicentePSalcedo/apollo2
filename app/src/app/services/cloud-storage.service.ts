@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { ref, Storage, getDownloadURL, uploadBytesResumable } from '@angular/fire/storage';
+import { ref, Storage, getDownloadURL, uploadBytesResumable, deleteObject } from '@angular/fire/storage';
 import { FirebaseAuthService } from './firebase-auth.service';
 import { User } from 'firebase/auth';
 
@@ -14,6 +14,18 @@ export class CloudStorageService {
     this.userAuth.user$.subscribe((data: User) => {
       this.user = data;
     })
+  }
+
+  deleteFiles(images: String[]) {
+    if(!this.user) return;
+    for(let i = 0; i < images.length; i++) {
+      let storageRef = ref(this.storage, "Users/" + images[i]);
+      deleteObject(storageRef).then(() => {
+        console.log(images[i] + " deleted succesfully");
+      }).catch((error) => {
+        console.log(error);
+      });
+    }
   }
 
   uploadFile(input: HTMLInputElement) {

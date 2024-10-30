@@ -12,6 +12,8 @@ import { FirestoreService } from '../services/firestore.service';
 import { CloudStorageService } from '../services/cloud-storage.service';
 import { EditEntryService } from '../services/edit-entry.service';
 import { Entry } from '../entry';
+import objectHash from 'object-hash';
+import { Timestamp } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-entry-form',
@@ -56,6 +58,69 @@ export class EntryFormComponent implements OnInit, OnDestroy {
     });
   }
 
+  createEntry(input: HTMLInputElement): Entry{
+    let smoothB1: number = 0;
+    let smoothB2: number = 0;
+    let smoothHoQa: number = 0;
+    let textureB1: number = 0;
+    let textureB2: number = 0;
+    let textureHoQa: number = 0;
+    let repairsOrWarranty: number = 0;
+    let image: string[] = [];
+    if (this.entry.value.boardType == 'B1 Liso') {
+      smoothB1 = this.entry.value.boards * 1.25;
+    } else if (this.entry.value.boardType == 'B2 Liso') {
+      smoothB2 = this.entry.value.boards * 0.75;
+    } else if (this.entry.value.boardType == 'HO/QA smo') {
+      smoothHoQa = this.entry.value.boards * 0.45;
+    } else if (this.entry.value.boardType == 'B1 text') {
+      textureB1 = this.entry.value.boards * 0.5;
+    } else if (this.entry.value.boardType == 'B2 text') {
+      textureB2 = this.entry.value.boards * 0.3;
+    } else if (this.entry.value.boardType == 'HO/QA') {
+      textureHoQa = this.entry.value.boards * 0.2;
+    }
+
+    if (this.entry.value.repairsOrWarranty == 'yes') {
+      repairsOrWarranty = this.entry.value.repairBoards;
+    }
+
+    if(input.files){
+      let files: FileList = input.files;
+
+      for(let i = 0; i < files.length; i++) {
+        let file = files.item(i);
+        if (file) {
+          image.push(this.user!.uid + "/" + file.name);
+        }
+      }
+    }
+    let id = objectHash(this.entry.value.date + this.entry.value.lotNo.toString() + this.entry.value.address.trim() + this.entry.value.boards.toString() + smoothB1.toString() + smoothB2.toString() + textureB1.toString() + textureB2.toString() + textureHoQa.toString() + repairsOrWarranty.toString() + this.entry.value.observations + image + this.entry.value.workers)
+    let now = new Date();
+    let timeStamp = now.getTime()
+    let ttl = new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
+    let entry: Entry = {
+        id: id,
+        timeStamp: timeStamp,
+        date: this.entry.value.date,
+        lotNo: this.entry.value.lotNo,
+        address: this.entry.value.address.trim(),
+        boards: this.entry.value.boards,
+        smoothB1: smoothB1,
+        smoothB2: smoothB2,
+        smoothHoQa: smoothHoQa,
+        textureB1: textureB1,
+        textureB2: textureB2,
+        textureHoQa: textureHoQa,
+        repairsOrWarranty: repairsOrWarranty,
+        observations: this.entry.value.observations,
+        image: image,
+        workers: this.entry.value.workers,
+        ttl: Timestamp.fromDate(ttl),
+    };
+    return entry;
+  }
+
   clearImages(){
     this.entry.reset({
       id: this.entry.value.id,
@@ -83,37 +148,39 @@ export class EntryFormComponent implements OnInit, OnDestroy {
     });
     this.editEntryService.currentEntry.next(this.editEntryService.initialEntry);
   }
+
   onDelete(){
     this.firestore.deletEntry(this.entry.value.id);
+    this.cloadStorage.deleteFiles(this.entry.value.image);
     this.clear();
   }
 
   onEdit(input: HTMLInputElement){
     if(!this.user) return;
-    let smoothB1: number = 0;
-    let smoothB2: number = 0;
-    let smoothHoQa: number = 0;
-    let textureB1: number = 0;
-    let textureB2: number = 0;
-    let textureHoQa: number = 0;
-    let repairsOrWarranty: number = 0;
-    let image: string[] = [];
+    let updatedEntry: Entry = this.editEntryService.currentEntry.getValue();
+    updatedEntry.smoothB1 = 0;
+    updatedEntry.smoothB2 = 0;
+    updatedEntry.smoothHoQa = 0;
+    updatedEntry.textureB1 = 0;
+    updatedEntry.textureB2 = 0;
+    updatedEntry.textureHoQa = 0;
+    updatedEntry.repairsOrWarranty = 0;
     if (this.entry.value.boardType == 'B1 Liso') {
-      smoothB1 = this.entry.value.boards * 1.25;
+      updatedEntry.smoothB1 = this.entry.value.boards * 1.25;
     } else if (this.entry.value.boardType == 'B2 Liso') {
-      smoothB2 = this.entry.value.boards * 0.75;
+      updatedEntry.smoothB2 = this.entry.value.boards * 0.75;
     } else if (this.entry.value.boardType == 'HO/QA smo') {
-      smoothHoQa = this.entry.value.boards * 0.45;
+      updatedEntry.smoothHoQa = this.entry.value.boards * 0.45;
     } else if (this.entry.value.boardType == 'B1 text') {
-      textureB1 = this.entry.value.boards * 0.5;
+      updatedEntry.textureB1 = this.entry.value.boards * 0.5;
     } else if (this.entry.value.boardType == 'B2 text') {
-      textureB2 = this.entry.value.boards * 0.3;
+      updatedEntry.textureB2 = this.entry.value.boards * 0.3;
     } else if (this.entry.value.boardType == 'HO/QA') {
-      textureHoQa = this.entry.value.boards * 0.2;
+      updatedEntry.textureHoQa = this.entry.value.boards * 0.2;
     }
 
     if (this.entry.value.repairsOrWarranty == 'yes') {
-      repairsOrWarranty = this.entry.value.repairBoards;
+      updatedEntry.repairsOrWarranty = this.entry.value.repairBoards;
     }
 
     if(input.files){
@@ -122,93 +189,20 @@ export class EntryFormComponent implements OnInit, OnDestroy {
       for(let i = 0; i < files.length; i++) {
         let file = files.item(i);
         if (file) {
-          image.push(this.user.uid + "/" + file.name);
+          updatedEntry.image.push(this.user.uid + "/" + file.name);
         }
       }
     }
-
-    this.firestore.editEntry(
-      this.entry.value.id,
-      this.entry.value.timeStamp,
-      this.entry.value.date,
-      this.entry.value.lotNo,
-      this.entry.value.address.trim(),
-      this.entry.value.boards,
-      smoothB1,
-      smoothB2,
-      smoothHoQa,
-      textureB1,
-      textureB2,
-      textureHoQa,
-      repairsOrWarranty,
-      this.entry.value.observations,
-      image,
-      this.entry.value.workers
-    );
-
+    this.firestore.editEntry(updatedEntry);
     this.cloadStorage.uploadFile(input);
-
     this.clear();
   }
 
   onSubmit(input: HTMLInputElement) {
     if(!this.user) return;
-    let smoothB1: number = 0;
-    let smoothB2: number = 0;
-    let smoothHoQa: number = 0;
-    let textureB1: number = 0;
-    let textureB2: number = 0;
-    let textureHoQa: number = 0;
-    let repairsOrWarranty: number = 0;
-    let image: string[] = [];
-    if (this.entry.value.boardType == 'B1 Liso') {
-      smoothB1 = this.entry.value.boards * 1.25;
-    } else if (this.entry.value.boardType == 'B2 Liso') {
-      smoothB2 = this.entry.value.boards * 0.75;
-    } else if (this.entry.value.boardType == 'HO/QA smo') {
-      smoothHoQa = this.entry.value.boards * 0.45;
-    } else if (this.entry.value.boardType == 'B1 text') {
-      textureB1 = this.entry.value.boards * 0.5;
-    } else if (this.entry.value.boardType == 'B2 text') {
-      textureB2 = this.entry.value.boards * 0.3;
-    } else if (this.entry.value.boardType == 'HO/QA') {
-      textureHoQa = this.entry.value.boards * 0.2;
-    }
-
-    if (this.entry.value.repairsOrWarranty == 'yes') {
-      repairsOrWarranty = this.entry.value.repairBoards;
-    }
-
-    if(input.files){
-      let files: FileList = input.files;
-
-      for(let i = 0; i < files.length; i++) {
-        let file = files.item(i);
-        if (file) {
-          image.push(this.user.uid + "/" + file.name);
-        }
-      }
-    }
-
-    this.firestore.addEntry(
-      this.entry.value.date,
-      this.entry.value.lotNo,
-      this.entry.value.address.trim(),
-      this.entry.value.boards,
-      smoothB1,
-      smoothB2,
-      smoothHoQa,
-      textureB1,
-      textureB2,
-      textureHoQa,
-      repairsOrWarranty,
-      this.entry.value.observations,
-      image,
-      this.entry.value.workers
-    );
-
+    let newEntry: Entry = this.createEntry(input);
+    this.firestore.addEntry(newEntry);
     this.cloadStorage.uploadFile(input);
-
     this.clear();
   }
 
