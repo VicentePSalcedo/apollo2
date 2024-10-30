@@ -1,6 +1,5 @@
 app/data
 google-cloud*
-package*
 
 # Logs
 logs
