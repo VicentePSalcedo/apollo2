@@ -27,6 +27,8 @@ import { Timestamp } from '@angular/fire/firestore';
 export class EntryFormComponent implements OnInit, OnDestroy {
   private editEntrySub$?: Subscription;
   currentEntry: Entry;
+  currentEntryWorkType: String;
+  currentEntryRepairsOrWarranty: String;
 
   private _userSubscription$!: Subscription;
 
@@ -42,19 +44,36 @@ export class EntryFormComponent implements OnInit, OnDestroy {
     private editEntryService: EditEntryService,
   ){
     this.currentEntry = this.editEntryService.currentEntry.getValue();
+    console.log(this.currentEntry);
+    if(this.currentEntry.smoothB2 > 0) {
+      this.currentEntryWorkType = "B2 Liso";
+    } else if(this.currentEntry.smoothHoQa > 0) {
+      this.currentEntryWorkType = "HO/QA smo";
+    } else if(this.currentEntry.textureB1 > 0) {
+      this.currentEntryWorkType = "B1 text";
+    } else if(this.currentEntry.textureB2 > 0) {
+      this.currentEntryWorkType = "B2 text";
+    } else if(this.currentEntry.textureHoQa > 0) {
+      this.currentEntryWorkType = "HO/QA";
+    } else {
+      this.currentEntryWorkType  = "B1 Liso";
+    }
+    if(this.currentEntry.repairsOrWarranty > 0) {
+      this.currentEntryRepairsOrWarranty = "yes";
+    } else {
+      this.currentEntryRepairsOrWarranty = "no";
+    }
     this.entry = this.fb.group({
-      id: [],
-      timeStamp: [],
-      date: [Validators.required],
-      lotNo: [Validators.required],
-      address: ['', Validators.required],
-      boardType: [],
-      boards: [0],
-      repairsOrWarranty: ['no'],
-      repairBoards: [0],
-      observations: [],
-      image: [],
-      workers: [],
+      date: [this.currentEntry.date, Validators.required],
+      lotNo: [this.currentEntry.lotNo, Validators.required],
+      address: [this.currentEntry.address, Validators.required],
+      boardType: [this.currentEntryWorkType],
+      boards: [this.currentEntry.boards],
+      repairsOrWarranty: [this.currentEntryRepairsOrWarranty],
+      repairBoards: [this.currentEntry.repairsOrWarranty],
+      observations: [this.currentEntry.observations],
+      image: [this.currentEntry.image],
+      workers: [this.currentEntry.workers],
     });
   }
 
@@ -122,30 +141,21 @@ export class EntryFormComponent implements OnInit, OnDestroy {
   }
 
   clearImages(){
-    this.entry.reset({
-      id: this.entry.value.id,
-      timeStamp: this.entry.value.timeStamp,
-      date: this.entry.value.date,
-      lotNo: this.entry.value.lotNo,
-      address: this.entry.value.address,
-      boardType: this.entry.value.boardType,
-      boards: this.entry.value.boards,
-      repairsOrWarranty: this.entry.value.repairsOrWarranty,
-      repairBoards: this.entry.value.repairBoards,
-      observations: this.entry.value.observations,
+    this.entry.setValue({
+      date: this.currentEntry.date,
+      lotNo: this.currentEntry.lotNo,
+      address: this.currentEntry.address,
+      boardType: this.currentEntryWorkType,
+      boards: this.currentEntry.boards,
+      repairsOrWarranty: this.currentEntryRepairsOrWarranty,
+      repairBoards: this.currentEntry.repairsOrWarranty,
+      observations: this.currentEntry.observations,
       image: [],
-      workers: this.entry.value.workers,
+      workers: this.currentEntry.workers,
     })
   }
 
   clear(){
-    this.entry.reset({
-      id: "",
-      date: this.entry.value.date,
-      boards: [0],
-      repairsOrWarranty: ['no'],
-      repairBoards: [0],
-    });
     this.editEntryService.currentEntry.next(this.editEntryService.initialEntry);
   }
 
@@ -211,31 +221,24 @@ export class EntryFormComponent implements OnInit, OnDestroy {
       this.user = data;
     });
     this.editEntrySub$ = this.editEntryService.currentEntry.subscribe((entry: Entry) =>{
-      let workType;
-      let repairsOrWarranty;
-      if(entry.smoothB1 > 0) workType = "B1 Liso";
-      if(entry.smoothB2 > 0) workType = "B2 Liso";
-      if(entry.smoothHoQa > 0) workType = "HO/QA smo";
-      if(entry.textureB1 > 0) workType = "B1 text";
-      if(entry.textureB2 > 0) workType = "B2 text";
-      if(entry.textureHoQa > 0) workType = "HO/QA";
-      if(entry.repairsOrWarranty > 0) repairsOrWarranty = "yes";
-      this.entry.reset({
-        id: entry.id,
-        timeStamp: entry.timeStamp,
-        date: entry.date,
-        lotNo: entry.lotNo,
-        address: entry.address,
-        boardType: workType,
-        boards: entry.boards,
-        repairsOrWarranty: repairsOrWarranty,
-        repairBoards: entry.repairsOrWarranty,
-        observations: entry.observations,
-        image: entry.image,
-        workers: entry.workers,
-      })
-      if(entry.repairsOrWarranty > 0){
-        this.entry.value.repairBoards = entry.repairsOrWarranty;
+      this.currentEntry = entry;
+      if(entry.smoothB2 > 0) {
+        this.currentEntryWorkType = "B2 Liso";
+      } else if(entry.smoothHoQa > 0) {
+        this.currentEntryWorkType = "HO/QA smo";
+      } else if(entry.textureB1 > 0) {
+        this.currentEntryWorkType = "B1 text";
+      } else if(entry.textureB2 > 0) {
+        this.currentEntryWorkType = "B2 text";
+      } else if(entry.textureHoQa > 0) {
+        this.currentEntryWorkType = "HO/QA";
+      } else {
+        this.currentEntryWorkType  = "B1 Liso";
+      }
+      if(entry.repairsOrWarranty > 0) {
+        this.currentEntryRepairsOrWarranty = "yes";
+      } else {
+        this.currentEntryRepairsOrWarranty = "no";
       }
     });
   }

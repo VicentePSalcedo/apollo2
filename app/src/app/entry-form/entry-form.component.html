@@ -3,21 +3,21 @@
   <div class="d-flex flex-row mr-auto p-1">
     <label for="date" class="d-flex flex-col col-form-label mr-auto p-2">Date</label>
     <div class="d-flex flex-col">
-      <input type="date" class="form-control" formControlName="date"/>
+      <input type="date" class="form-control" formControlName="date" [value]="this.currentEntry.date"/>
     </div>
   </div>
 
   <div class="d-flex flex-row mr-auto p-1">
     <label for="lotNo" class="d-flex flex-col col-form-label mr-auto p-2">Lot No</label>
     <div class="d-flex flex-col">
-        <input type="number" class="form-control" formControlName="lotNo"/>
+        <input type="number" class="form-control" formControlName="lotNo" [value]="this.currentEntry.lotNo"/>
     </div>
   </div>
 
   <div class="d-flex flex-row mr-auto p-1">
     <label for="address" class="d-flex flex-col col-form-label mr-auto p-2">Address</label>
     <div class="d-flex flex-col">
-        <input type="text" class="form-control" formControlName="address"/>
+        <input type="text" class="form-control" formControlName="address" [value]="this.currentEntry.address"/>
     </div>
   </div>
 
@@ -38,7 +38,7 @@
   <div class="d-flex flex-row mr-auto p-1">
     <label for="boards" class="d-flex flex-col col-form-label mr-auto p-2">Boards</label>
     <div class="d-flex flex-col">
-        <input type="number" class="form-control" formControlName="boards"/>
+        <input type="number" class="form-control" formControlName="boards" [value]="this.currentEntry.boards"/>
     </div>
   </div>
 
@@ -55,42 +55,45 @@
   <div class="d-flex flex-row mr-auto p-1">
     <label for="boards" class="d-flex flex-col col-form-label mr-auto p-2">Repair/Warranty Boards</label>
     <div class="d-flex flex-col">
-        <input type="number" class="form-control" formControlName="repairBoards"/>
+        <input type="number" class="form-control" formControlName="repairBoards" [value]="this.currentEntry.repairsOrWarranty"/>
     </div>
   </div>
 
   <div class="d-flex flex-row mr-auto p-1">
     <label for="observations" class="d-flex flex-col col-form-label mr-auto p-2">Observations</label>
     <div class="d-flex flex-col">
-        <input type="text" class="form-control" formControlName="observations" />
+        <input type="text" class="form-control" formControlName="observations" [value]="this.currentEntry.observations"/>
     </div>
   </div>
 
   <div class="d-flex flex-row mr-auto p-1">
     <label for="image" class="d-flex flex-col col-form-label mr-auto p-2">Images</label>
     <div class="d-flex flex-col">
-      <input id="image" type="file" multiple="multiple" formControlName="image" class="form-control" #upload />
+      <input id="image" type="file" multiple="multiple" formControlName="image" class="form-control" #upload/>
     </div>
     <div (click)=clearImages() class="d-flex flex-col">
       <button class="btn btn-secondary">Clear</button>
     </div>
   </div>
+  @for(image of this.currentEntry.image; track image){
+    <span>---image  remove---</span>
+  }
 
   <div class="d-flex flex-row mr-auto p-1">
     <label for="workers" class="d-flex flex-col col-form-label mr-auto p-2">Worker</label>
     <div class="d-flex flex-col">
-      <input type="text" class="form-control" formControlName="workers"/>
+      <input type="text" class="form-control" formControlName="workers" [value]="this.currentEntry.workers"/>
     </div>
   </div>
 
   <div class="d-grid gap-1 d-md-flex justify-content-md-end" role="group">
-    @if(this.entry.value.id == ""){
+    @if(this.currentEntry.id == ""){
       <button (click)=clear() class="btn btn-secondary btn-sm"> Clear </button>
-      <button (click)=onSubmit(upload) [disabled]="!entry.valid" class="btn btn-primary btn-sm me-md-2">Submit</button>
+      <button (click)=onSubmit(upload) [disabled]="!entry.valid" class="btn btn-primary btn-sm me-md-2">Add Entry</button>
     } @else {
-      <button (click)=clear() class="btn btn-secondary btn-sm"> Clear </button>
-      <button (click)=onDelete() class="btn btn-danger btn-sm"> Delete </button>
-      <button (click)=onEdit(upload) class="btn btn-primary btn-sm"> Save </button>
+      <button (click)=clear() class="btn btn-secondary btn-sm"> Exit </button>
+      <button (click)=onDelete() class="btn btn-danger btn-sm"> Delete Entry</button>
+      <button (click)=onEdit(upload) class="btn btn-primary btn-sm"> Save Entry</button>
     }
   </div>
 </form>
