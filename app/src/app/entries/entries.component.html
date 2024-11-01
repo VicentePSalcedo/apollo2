@@ -2,7 +2,9 @@
   <table class="table table-striped table-bordered table-sm">
     <thead class="thead-light">
       <tr>
-        <th></th>
+        @if(this.route.url === '/'){
+          <th></th>
+        }
         <th>Date</th>
         <th>Lot No & Address</th>
         <th>Boards</th>
@@ -21,9 +23,11 @@
     <tbody>
       @for (entry of this.entriesDisplayed; track entry.id) {
         <tr>
+        @if(this.route.url === '/'){
           <td>
-              <button (click)="openEdit(entry)" class="btn btn-sm btn-secondary" routerLink="/" [disabled]="this.route.url === '/export'">Edit</button>
+            <button (click)="openEdit(entry)" class="btn btn-sm btn-secondary" routerLink="/" >Edit</button>
           </td>
+        }
           <td>{{ entry.date }}</td>
           <td>{{ entry.lotNo }} {{ entry.address }}</td>
           <td>@if(entry.boards > 0){{{ entry.boards.toFixed(2) }}}</td>
@@ -47,7 +51,9 @@
         </tr>
       }
       <tr>
-        <td></td>
+        @if(this.route.url === '/'){
+          <td></td>
+        }
         <td></td>
         <td></td>
         <td></td>
