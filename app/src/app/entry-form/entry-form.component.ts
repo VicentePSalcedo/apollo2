@@ -40,7 +40,7 @@ export class EntryFormComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private userAuth: FirebaseAuthService,
     private firestore: FirestoreService,
-    private cloadStorage: CloudStorageService,
+    private cloudStorage: CloudStorageService,
     private editEntryService: EditEntryService,
   ){
     this.currentEntry = this.editEntryService.currentEntry.getValue();
@@ -49,7 +49,7 @@ export class EntryFormComponent implements OnInit, OnDestroy {
     if(this.currentEntry.repairsOrWarranty > 0) {
       this.currentEntryRepairsOrWarranty = "yes";
     } else {
-      this.currentEntryRepairsOrWarranty = "no";
+      this.currentEntryRepairsOrWarranty = "";
     }
     this.entry = this.fb.group({
       date: [this.currentEntry.date, Validators.required],
@@ -65,18 +65,24 @@ export class EntryFormComponent implements OnInit, OnDestroy {
     });
   }
 
+  removeImageFromEntry(imageToRemove: String, entry: Entry){
+    const imageArray: String[] = [imageToRemove];
+    entry.image = entry.image.filter(image => image !== imageToRemove);
+    this.firestore.editEntry(entry);
+    this.cloudStorage.deleteFiles(imageArray);
+  }
+
   onSubmit(input: HTMLInputElement) {
     if(!this.user) return;
     let newEntry: Entry = this.createEntry(input);
     this.firestore.addEntry(newEntry);
-    this.cloadStorage.uploadFile(input, newEntry.id);
+    this.cloudStorage.uploadFile(input, newEntry.id);
     this.clear();
   }
 
   onEdit(input: HTMLInputElement){
     if(!this.user) return;
     let updatedEntry: Entry = this.editEntryService.currentEntry.getValue();
-    //TODO: fix this
     if(this.entry.value.date){
       updatedEntry.date = this.entry.value.date;
     }
@@ -88,37 +94,40 @@ export class EntryFormComponent implements OnInit, OnDestroy {
     }
     if(this.entry.value.boards){
       updatedEntry.boards = this.entry.value.boards;
-    }
-    if(this.entry.value.boards){
-      updatedEntry.boards = this.entry.value.boards;
       updatedEntry = this.updateEntryBoardsByType(updatedEntry, this.currentEntryWorkType);
     }
     if(this.entry.value.boardType){
       updatedEntry = this.updateEntryBoardsByType(updatedEntry, this.entry.value.boardType);
     }
-    if (this.entry.value.repairsOrWarranty == 'yes') {
+    if(this.entry.value.repairBoards && (this.currentEntry.repairsOrWarranty > 0 || this.entry.value.repairsOrWarranty == "yes")){
       updatedEntry.repairsOrWarranty = this.entry.value.repairBoards;
-    } else if (this.entry.value.repairsOrWarranty == 'no'){
+    }
+    if (this.entry.value.repairsOrWarranty == "no"){
       updatedEntry.repairsOrWarranty = 0;
+    }
+    if(this.entry.value.observations){
+      updatedEntry.observations = this.entry.value.observations;
+    }
+    if(this.entry.value.workers){
+      updatedEntry.workers = this.entry.value.workers;
     }
     if(input.files){
       let files: FileList = input.files;
       for(let i = 0; i < files.length; i++) {
         let file = files.item(i);
-        if (file) {
+        if (file && !updatedEntry.image.includes(this.user!.uid + "/" + updatedEntry.id + "/" + file.name)) {
           updatedEntry.image.push(this.user!.uid + "/" + updatedEntry.id + "/" + file.name);
         }
       }
     }
     this.firestore.editEntry(updatedEntry);
-    this.cloadStorage.uploadFile(input, updatedEntry.id);
+    this.cloudStorage.uploadFile(input, updatedEntry.id);
     this.clear();
   }
 
-
   onDelete(){
     this.firestore.deletEntry(this.currentEntry.id);
-    this.cloadStorage.deleteFiles(this.currentEntry.image);
+    this.cloudStorage.deleteFiles(this.currentEntry.image);
     this.clear();
   }
 
@@ -155,6 +164,7 @@ export class EntryFormComponent implements OnInit, OnDestroy {
 
   clear(){
     this.editEntryService.currentEntry.next(this.editEntryService.initialEntry);
+    this.entry.reset();
   }
 
   clearImages(){
@@ -196,7 +206,9 @@ export class EntryFormComponent implements OnInit, OnDestroy {
   }
 
   getCurrentEntryWorkType(entry: Entry): String{
-    if(entry.smoothB2 > 0) {
+    if (entry.smoothB1 > 0){
+      return "B1 Liso";
+    } else if(entry.smoothB2 > 0) {
       return "B2 Liso";
     } else if(entry.smoothHoQa > 0) {
       return "HO/QA smo";
@@ -207,8 +219,20 @@ export class EntryFormComponent implements OnInit, OnDestroy {
     } else if(entry.textureHoQa > 0) {
       return "HO/QA";
     } else {
-      return "B1 Liso";
+      return "";
     }
+  }
+
+  getFileNameFromUrl(fileUrl: string, entryId: string): string {
+    if(this.user){
+      let fileUrlWithoutUserId = fileUrl.replace(this.user.uid + "/", "");
+      return fileUrlWithoutUserId.replace(entryId + "/", "");
+    }
+    return 'none'
+  }
+
+  openFile(input: string){
+    this.cloudStorage.openFile(input);
   }
 
   ngOnInit(): void {

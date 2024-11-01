@@ -24,7 +24,7 @@
   <div class="d-flex flex-row mr-auto p-1">
     <label for="boardType" class="d-flex flex-col col-form-label mr-auto p-2">Work Type</label>
     <div class="d-flex flex-col">
-        <select formControlName = "boardType" class="form-select">
+        <select formControlName = "boardType" class="form-select" [value]="this.currentEntryWorkType">
           <option value="B1 Liso">B1 Smooth</option>
           <option value="B2 Liso">B2 Smooth</option>
           <option value="HO/QA smo">HO/QA Smooth</option>
@@ -45,7 +45,7 @@
   <div class="d-flex flex-row mr-auto p-1">
     <label for="boardType" class="d-flex flex-col col-form-label mr-auto p-2">Repairs/Warranty</label>
     <div class="d-flex flex-col">
-        <select formControlName="repairsOrWarranty" class="form-select">
+        <select formControlName="repairsOrWarranty" class="form-select" [value]="this.currentEntryRepairsOrWarranty">
           <option value="yes">yes</option>
           <option value="no">no</option>
         </select>
@@ -75,9 +75,17 @@
       <button class="btn btn-secondary">Clear</button>
     </div>
   </div>
-  @for(image of this.currentEntry.image; track image){
-    <span>---image  remove---</span>
-  }
+
+  <div class="d-flex flex-row mr-auto p-1">
+    @for(image of this.currentEntry.image; track image){
+    <div class="d-flex flex-col">
+      <a (click)="openFile(image)" class="entryLink">{{ getFileNameFromUrl(image, this.currentEntry.id) }}</a>
+    </div>
+    <div (click)="removeImageFromEntry(image, this.currentEntry)" class="d-flex flex-col">
+      <button class="btn btn-secondary btn-sm">Remove</button>
+    </div>
+    }
+  </div>
 
   <div class="d-flex flex-row mr-auto p-1">
     <label for="workers" class="d-flex flex-col col-form-label mr-auto p-2">Worker</label>

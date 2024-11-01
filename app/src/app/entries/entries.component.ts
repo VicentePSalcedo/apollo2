@@ -58,7 +58,6 @@ export class EntriesComponent implements OnInit, OnDestroy {
 
   openEdit(entry: Entry) {
     this.editEntryService.currentEntry.next(entry);
-    console.log(entry);
   }
 
   openFile(input: string){
