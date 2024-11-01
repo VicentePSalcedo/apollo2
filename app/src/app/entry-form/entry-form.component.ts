@@ -45,19 +45,7 @@ export class EntryFormComponent implements OnInit, OnDestroy {
   ){
     this.currentEntry = this.editEntryService.currentEntry.getValue();
     console.log(this.currentEntry);
-    if(this.currentEntry.smoothB2 > 0) {
-      this.currentEntryWorkType = "B2 Liso";
-    } else if(this.currentEntry.smoothHoQa > 0) {
-      this.currentEntryWorkType = "HO/QA smo";
-    } else if(this.currentEntry.textureB1 > 0) {
-      this.currentEntryWorkType = "B1 text";
-    } else if(this.currentEntry.textureB2 > 0) {
-      this.currentEntryWorkType = "B2 text";
-    } else if(this.currentEntry.textureHoQa > 0) {
-      this.currentEntryWorkType = "HO/QA";
-    } else {
-      this.currentEntryWorkType  = "B1 Liso";
-    }
+    this.currentEntryWorkType = this.getCurrentEntryWorkType(this.currentEntry)
     if(this.currentEntry.repairsOrWarranty > 0) {
       this.currentEntryRepairsOrWarranty = "yes";
     } else {
@@ -77,67 +65,96 @@ export class EntryFormComponent implements OnInit, OnDestroy {
     });
   }
 
-  createEntry(input: HTMLInputElement): Entry{
-    let smoothB1: number = 0;
-    let smoothB2: number = 0;
-    let smoothHoQa: number = 0;
-    let textureB1: number = 0;
-    let textureB2: number = 0;
-    let textureHoQa: number = 0;
-    let repairsOrWarranty: number = 0;
-    let image: string[] = [];
-    if (this.entry.value.boardType == 'B1 Liso') {
-      smoothB1 = this.entry.value.boards * 1.25;
-    } else if (this.entry.value.boardType == 'B2 Liso') {
-      smoothB2 = this.entry.value.boards * 0.75;
-    } else if (this.entry.value.boardType == 'HO/QA smo') {
-      smoothHoQa = this.entry.value.boards * 0.45;
-    } else if (this.entry.value.boardType == 'B1 text') {
-      textureB1 = this.entry.value.boards * 0.5;
-    } else if (this.entry.value.boardType == 'B2 text') {
-      textureB2 = this.entry.value.boards * 0.3;
-    } else if (this.entry.value.boardType == 'HO/QA') {
-      textureHoQa = this.entry.value.boards * 0.2;
-    }
+  onSubmit(input: HTMLInputElement) {
+    if(!this.user) return;
+    let newEntry: Entry = this.createEntry(input);
+    this.firestore.addEntry(newEntry);
+    this.cloadStorage.uploadFile(input, newEntry.id);
+    this.clear();
+  }
 
+  onEdit(input: HTMLInputElement){
+    if(!this.user) return;
+    let updatedEntry: Entry = this.editEntryService.currentEntry.getValue();
+    //TODO: fix this
+    if(this.entry.value.date){
+      updatedEntry.date = this.entry.value.date;
+    }
+    if(this.entry.value.lotNo){
+      updatedEntry.lotNo = this.entry.value.lotNo;
+    }
+    if(this.entry.value.address){
+      updatedEntry.address = this.entry.value.address;
+    }
+    if(this.entry.value.boards){
+      updatedEntry.boards = this.entry.value.boards;
+    }
+    if(this.entry.value.boards){
+      updatedEntry.boards = this.entry.value.boards;
+      updatedEntry = this.updateEntryBoardsByType(updatedEntry, this.currentEntryWorkType);
+    }
+    if(this.entry.value.boardType){
+      updatedEntry = this.updateEntryBoardsByType(updatedEntry, this.entry.value.boardType);
+    }
     if (this.entry.value.repairsOrWarranty == 'yes') {
-      repairsOrWarranty = this.entry.value.repairBoards;
+      updatedEntry.repairsOrWarranty = this.entry.value.repairBoards;
+    } else if (this.entry.value.repairsOrWarranty == 'no'){
+      updatedEntry.repairsOrWarranty = 0;
     }
+    if(input.files){
+      let files: FileList = input.files;
+      for(let i = 0; i < files.length; i++) {
+        let file = files.item(i);
+        if (file) {
+          updatedEntry.image.push(this.user!.uid + "/" + updatedEntry.id + "/" + file.name);
+        }
+      }
+    }
+    this.firestore.editEntry(updatedEntry);
+    this.cloadStorage.uploadFile(input, updatedEntry.id);
+    this.clear();
+  }
 
+
+  onDelete(){
+    this.firestore.deletEntry(this.currentEntry.id);
+    this.cloadStorage.deleteFiles(this.currentEntry.image);
+    this.clear();
+  }
+
+  createEntry(input: HTMLInputElement): Entry{
+    let entry: Entry = this.editEntryService.initialEntry;
+    let now = new Date();
+    let timeStamp = now.getTime()
+    let ttl = new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
+    entry.id = objectHash(this.entry.value.date + this.entry.value.lotNo.toString() + this.entry.value.address.trim() + this.entry.value.boards.toString() + this.entry.value.boardType + this.entry.value.repairBoards + this.entry.value.observations + this.entry.value.image + this.entry.value.workers)
+    entry.timeStamp = timeStamp;
+    entry.date = this.entry.value.date;
+    entry.lotNo = this.entry.value.lotNo;
+    entry.address = this.entry.value.address.trim();
+    entry.boards = this.entry.value.boards;
+    entry = this.updateEntryBoardsByType(entry, this.entry.value.boardType);
+    if (this.entry.value.repairsOrWarranty == 'yes') {
+      entry.repairsOrWarranty = this.entry.value.repairBoards;
+    }
+    entry.observations = this.entry.value.observations;
     if(input.files){
       let files: FileList = input.files;
 
       for(let i = 0; i < files.length; i++) {
         let file = files.item(i);
         if (file) {
-          image.push(this.user!.uid + "/" + file.name);
+          entry.image.push(this.user!.uid + "/" + entry.id + "/" + file.name);
         }
       }
     }
-    let id = objectHash(this.entry.value.date + this.entry.value.lotNo.toString() + this.entry.value.address.trim() + this.entry.value.boards.toString() + smoothB1.toString() + smoothB2.toString() + textureB1.toString() + textureB2.toString() + textureHoQa.toString() + repairsOrWarranty.toString() + this.entry.value.observations + image + this.entry.value.workers)
-    let now = new Date();
-    let timeStamp = now.getTime()
-    let ttl = new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
-    let entry: Entry = {
-        id: id,
-        timeStamp: timeStamp,
-        date: this.entry.value.date,
-        lotNo: this.entry.value.lotNo,
-        address: this.entry.value.address.trim(),
-        boards: this.entry.value.boards,
-        smoothB1: smoothB1,
-        smoothB2: smoothB2,
-        smoothHoQa: smoothHoQa,
-        textureB1: textureB1,
-        textureB2: textureB2,
-        textureHoQa: textureHoQa,
-        repairsOrWarranty: repairsOrWarranty,
-        observations: this.entry.value.observations,
-        image: image,
-        workers: this.entry.value.workers,
-        ttl: Timestamp.fromDate(ttl),
-    };
+    entry.workers = this.entry.value.workers;
+    entry.ttl = Timestamp.fromDate(ttl);
     return entry;
+  }
+
+  clear(){
+    this.editEntryService.currentEntry.next(this.editEntryService.initialEntry);
   }
 
   clearImages(){
@@ -155,65 +172,43 @@ export class EntryFormComponent implements OnInit, OnDestroy {
     })
   }
 
-  clear(){
-    this.editEntryService.currentEntry.next(this.editEntryService.initialEntry);
+  updateEntryBoardsByType(entry: Entry, workType: String): Entry {
+    entry.smoothB1 = 0;
+    entry.smoothB2 = 0;
+    entry.smoothHoQa = 0;
+    entry.textureB1 = 0;
+    entry.textureB2 = 0;
+    entry.textureHoQa = 0;
+    if (workType == 'B1 Liso') {
+      entry.smoothB1 = entry.boards * 1.25;
+    } else if (workType == 'B2 Liso') {
+      entry.smoothB2 = entry.boards * 0.75;
+    } else if (workType == 'HO/QA smo') {
+      entry.smoothHoQa = entry.boards * 0.45;
+    } else if (workType == 'B1 text') {
+      entry.textureB1 = entry.boards * 0.5;
+    } else if (workType == 'B2 text') {
+      entry.textureB2 = entry.boards * 0.3;
+    } else if (workType == 'HO/QA') {
+      entry.textureHoQa = entry.boards * 0.2;
+    }
+    return entry;
   }
 
-  onDelete(){
-    this.firestore.deletEntry(this.entry.value.id);
-    this.cloadStorage.deleteFiles(this.entry.value.image);
-    this.clear();
-  }
-
-  onEdit(input: HTMLInputElement){
-    if(!this.user) return;
-    let updatedEntry: Entry = this.editEntryService.currentEntry.getValue();
-    updatedEntry.smoothB1 = 0;
-    updatedEntry.smoothB2 = 0;
-    updatedEntry.smoothHoQa = 0;
-    updatedEntry.textureB1 = 0;
-    updatedEntry.textureB2 = 0;
-    updatedEntry.textureHoQa = 0;
-    updatedEntry.repairsOrWarranty = 0;
-    if (this.entry.value.boardType == 'B1 Liso') {
-      updatedEntry.smoothB1 = this.entry.value.boards * 1.25;
-    } else if (this.entry.value.boardType == 'B2 Liso') {
-      updatedEntry.smoothB2 = this.entry.value.boards * 0.75;
-    } else if (this.entry.value.boardType == 'HO/QA smo') {
-      updatedEntry.smoothHoQa = this.entry.value.boards * 0.45;
-    } else if (this.entry.value.boardType == 'B1 text') {
-      updatedEntry.textureB1 = this.entry.value.boards * 0.5;
-    } else if (this.entry.value.boardType == 'B2 text') {
-      updatedEntry.textureB2 = this.entry.value.boards * 0.3;
-    } else if (this.entry.value.boardType == 'HO/QA') {
-      updatedEntry.textureHoQa = this.entry.value.boards * 0.2;
+  getCurrentEntryWorkType(entry: Entry): String{
+    if(entry.smoothB2 > 0) {
+      return "B2 Liso";
+    } else if(entry.smoothHoQa > 0) {
+      return "HO/QA smo";
+    } else if(entry.textureB1 > 0) {
+      return "B1 text";
+    } else if(entry.textureB2 > 0) {
+      return "B2 text";
+    } else if(entry.textureHoQa > 0) {
+      return "HO/QA";
+    } else {
+      return "B1 Liso";
     }
-
-    if (this.entry.value.repairsOrWarranty == 'yes') {
-      updatedEntry.repairsOrWarranty = this.entry.value.repairBoards;
-    }
-
-    if(input.files){
-      let files: FileList = input.files;
-
-      for(let i = 0; i < files.length; i++) {
-        let file = files.item(i);
-        if (file) {
-          updatedEntry.image.push(this.user.uid + "/" + file.name);
-        }
-      }
-    }
-    this.firestore.editEntry(updatedEntry);
-    this.cloadStorage.uploadFile(input);
-    this.clear();
-  }
-
-  onSubmit(input: HTMLInputElement) {
-    if(!this.user) return;
-    let newEntry: Entry = this.createEntry(input);
-    this.firestore.addEntry(newEntry);
-    this.cloadStorage.uploadFile(input);
-    this.clear();
   }
 
   ngOnInit(): void {
@@ -222,19 +217,7 @@ export class EntryFormComponent implements OnInit, OnDestroy {
     });
     this.editEntrySub$ = this.editEntryService.currentEntry.subscribe((entry: Entry) =>{
       this.currentEntry = entry;
-      if(entry.smoothB2 > 0) {
-        this.currentEntryWorkType = "B2 Liso";
-      } else if(entry.smoothHoQa > 0) {
-        this.currentEntryWorkType = "HO/QA smo";
-      } else if(entry.textureB1 > 0) {
-        this.currentEntryWorkType = "B1 text";
-      } else if(entry.textureB2 > 0) {
-        this.currentEntryWorkType = "B2 text";
-      } else if(entry.textureHoQa > 0) {
-        this.currentEntryWorkType = "HO/QA";
-      } else {
-        this.currentEntryWorkType  = "B1 Liso";
-      }
+      this.currentEntryWorkType = this.getCurrentEntryWorkType(entry);
       if(entry.repairsOrWarranty > 0) {
         this.currentEntryRepairsOrWarranty = "yes";
       } else {

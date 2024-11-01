@@ -22,7 +22,7 @@
       @for (entry of this.entriesDisplayed; track entry.id) {
         <tr>
           <td>
-              <button (click)="openEdit(entry)" class="btn btn-sm btn-secondary" routerLink="/">Edit</button>
+              <button (click)="openEdit(entry)" class="btn btn-sm btn-secondary" routerLink="/" [disabled]="this.route.url === '/export'">Edit</button>
           </td>
           <td>{{ entry.date }}</td>
           <td>{{ entry.lotNo }} {{ entry.address }}</td>
@@ -38,8 +38,8 @@
           <td>{{ entry.workers }}</td>
           <td>
           @for (image of entry.image; track image){
-            <a (click)=openFile(image) class="entryLink">
-              {{ getFileNameFromUrl(image) }}
+            <a (click)="openFile(image)" class="entryLink">
+              {{ getFileNameFromUrl(image, entry.id) }}
             </a>
             <br>
           }

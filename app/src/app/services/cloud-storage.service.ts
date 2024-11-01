@@ -28,14 +28,14 @@ export class CloudStorageService {
     }
   }
 
-  uploadFile(input: HTMLInputElement) {
+  uploadFile(input: HTMLInputElement, entryId: String) {
     if(!input.files || !this.user) return;
     let files: FileList = input.files;
 
     for(let i = 0; i < files.length; i++) {
       let file = files.item(i);
       if (file) {
-        let storageRef = ref(this.storage, "Users/" + this.user.uid + "/" + file.name);
+        let storageRef = ref(this.storage, "Users/" + this.user.uid + "/" + entryId + "/" + file.name);
         uploadBytesResumable(storageRef, file);
       }
     }

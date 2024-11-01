@@ -5,7 +5,7 @@ import { FirebaseAuthService } from '../services/firebase-auth.service';
 import { CloudStorageService } from '../services/cloud-storage.service';
 import { Subscription } from 'rxjs';
 import { EntriesDataService } from '../services/entries-data.service';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { EditEntryService } from '../services/edit-entry.service';
 
 @Component({
@@ -42,26 +42,34 @@ export class EntriesComponent implements OnInit, OnDestroy {
   repairsOrWarrantyTotal: number = 0;
   grandTotal: number = 0;
 
+  private editEntrySub$?: Subscription;
+  currentEntry: Entry;
+
   constructor(
     private userAuth: FirebaseAuthService,
     private cloudStorage: CloudStorageService,
     private entriesDataService: EntriesDataService,
     private editEntryService: EditEntryService,
+    public route: Router,
   ){
+    this.currentEntry = this.editEntryService.currentEntry.getValue();
     this.entriesDisplayed = this.entriesDataService.entriesDisplayed.getValue();
   }
 
   openEdit(entry: Entry) {
     this.editEntryService.currentEntry.next(entry);
+    console.log(entry);
   }
 
   openFile(input: string){
+    console.log(input);
     this.cloudStorage.openFile(input);
   }
 
-  getFileNameFromUrl(fileUrl: string): string {
+  getFileNameFromUrl(fileUrl: string, entryId: string): string {
     if(this.user){
-      return fileUrl.replace(this.user.uid + "/", "");
+      let fileUrlWithoutUserId = fileUrl.replace(this.user.uid + "/", "");
+      return fileUrlWithoutUserId.replace(entryId + "/", "");
     }
     return 'none'
   }
@@ -97,6 +105,9 @@ export class EntriesComponent implements OnInit, OnDestroy {
     this.userSub$ = this.userAuth.user$.subscribe((data: User | null)=>{
       this.user = data;
     });
+    this.editEntrySub$ = this.editEntryService.currentEntry.subscribe((entry: Entry) => {
+      this.currentEntry = entry;
+    });
   }
 
   ngOnDestroy(): void {
@@ -110,6 +121,7 @@ export class EntriesComponent implements OnInit, OnDestroy {
     this.repairsOrWarrantyTotal$?.unsubscribe();
     this.grandTotal$?.unsubscribe();
     this.userSub$?.unsubscribe();
+    this.editEntrySub$?.unsubscribe();
   }
 
 }
