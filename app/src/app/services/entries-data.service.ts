@@ -22,7 +22,7 @@ export class EntriesDataService {
   constructor(
     private firestore: FirestoreService,
   ) {
-    this.firestore.entries$.pipe().subscribe((value: Entry[]) => {
+    this.firestore.entries$.subscribe((value: Entry[]) => {
       let sortedValue = this.sortByTimeStamp(value);
       this.entriesData = sortedValue;
       this.filterObjectsByCurrentWeek();
@@ -45,8 +45,8 @@ export class EntriesDataService {
   )
   {
     if(!this.entriesData) return;
-      const formatedStartDate = new Date(startDate).getTime();
-      const formatedEndDate = new Date(endDate).getTime();
+    const formatedStartDate = new Date(startDate).getTime();
+    const formatedEndDate = new Date(endDate).getTime();
     this.entriesDisplayed.next(this.entriesData.filter(entry => {
       const date = new Date(entry.date).getTime();
       // Check for startDate and endDate
