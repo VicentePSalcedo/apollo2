@@ -44,7 +44,6 @@ export class EntryFormComponent implements OnInit, OnDestroy {
     private editEntryService: EditEntryService,
   ){
     this.currentEntry = this.editEntryService.currentEntry.getValue();
-    console.log(this.currentEntry);
     this.currentEntryWorkType = this.getCurrentEntryWorkType(this.currentEntry)
     if(this.currentEntry.repairsOrWarranty > 0) {
       this.currentEntryRepairsOrWarranty = "yes";
@@ -132,7 +131,7 @@ export class EntryFormComponent implements OnInit, OnDestroy {
   }
 
   createEntry(input: HTMLInputElement): Entry{
-    let entry: Entry = this.editEntryService.initialEntry;
+    let entry: Entry = this.editEntryService.newEntry();
     let now = new Date();
     let timeStamp = now.getTime()
     let ttl = new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
@@ -163,8 +162,9 @@ export class EntryFormComponent implements OnInit, OnDestroy {
   }
 
   clear(){
-    this.editEntryService.currentEntry.next(this.editEntryService.initialEntry);
+    this.editEntryService.currentEntry.next(this.editEntryService.newEntry());
     this.entry.reset();
+    console.log(this.currentEntry);
   }
 
   clearImages(){
