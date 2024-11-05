@@ -135,7 +135,7 @@ export class EntryFormComponent implements OnInit, OnDestroy {
     let now = new Date();
     let timeStamp = now.getTime()
     let ttl = new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
-    entry.id = objectHash(this.entry.value.date + this.entry.value.lotNo.toString() + this.entry.value.address.trim() + this.entry.value.boards.toString() + this.entry.value.boardType + this.entry.value.repairBoards + this.entry.value.observations + this.entry.value.image + this.entry.value.workers)
+    entry.id = objectHash(this.entry.value.date + this.entry.value.lotNo.toString() + this.entry.value.address.trim() + this.entry.value.boards + this.entry.value.boardType + this.entry.value.repairBoards + this.entry.value.observations + this.entry.value.image + this.entry.value.workers)
     entry.timeStamp = timeStamp;
     entry.date = this.entry.value.date;
     entry.lotNo = this.entry.value.lotNo;
