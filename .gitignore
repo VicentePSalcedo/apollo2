@@ -1,5 +1,6 @@
 app/data
 google-cloud*
+.direnv
 
 # Logs
 logs
@@ -76,7 +77,6 @@ web_modules/
 .yarn-integrity
 
 # dotenv environment variable files
-.envrc
 .env
 .env.development.local
 .env.test.local

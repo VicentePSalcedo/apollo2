@@ -17,10 +17,13 @@
         pkgs.mkShell {
           # create an environment with nodejs_18, pnpm, and yarn
           packages = with pkgs; [
+            firebase-tools
             jdk
             nodejs_20
             nodePackages.pnpm
             nodePackages.typescript
+            nodePackages."@angular/cli"
+            vscode-extensions.angular.ng-template
             python3
           ];
           shellHook = ''
